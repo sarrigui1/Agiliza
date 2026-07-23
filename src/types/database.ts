@@ -84,6 +84,7 @@ export interface Database {
           codigo: string;
           nombre: string;
           descripcion: string | null;
+          activo: boolean;
           created_at: string;
         };
         Insert: {
@@ -91,6 +92,7 @@ export interface Database {
           codigo: string;
           nombre: string;
           descripcion?: string | null;
+          activo?: boolean;
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['zonas']['Insert']>;

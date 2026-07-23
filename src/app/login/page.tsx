@@ -47,10 +47,7 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-dvh items-center justify-center bg-bg px-4">
       <div className="w-full max-w-md rounded-lg border border-border bg-surface p-10">
-        <p className="mb-6 font-mono text-sm font-bold tracking-widest text-primary">
-          KINETIC_NEON_OPS
-        </p>
-        <h1 className="mb-1 text-3xl font-bold text-text">Acceso al Sistema</h1>
+        <h1 className="mb-1 text-3xl font-bold text-text">Agiliza</h1>
         <p className="mb-8 text-sm text-muted">Ingrese sus credenciales para continuar</p>
 
         <form onSubmit={iniciarSesion} className="flex flex-col gap-5">
