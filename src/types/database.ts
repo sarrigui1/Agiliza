@@ -327,6 +327,45 @@ export interface Database {
         Args: Record<string, never>;
         Returns: number;
       };
+      fn_metricas_ejecutivas: {
+        Args: { p_desde: string; p_hasta: string; p_sla_minutos?: number };
+        Returns: {
+          total_generados: number;
+          total_atendidos: number;
+          total_ausentes: number;
+          tasa_ausentismo: number | null;
+          tpe_global_minutos: number | null;
+          tpa_global_minutos: number | null;
+          cumplimiento_sla: number | null;
+        }[];
+      };
+      fn_heatmap_demanda: {
+        Args: { p_desde: string; p_hasta: string };
+        Returns: { dia_semana: number; hora: number; cantidad: number }[];
+      };
+      fn_tendencia_diaria: {
+        Args: { p_desde: string; p_hasta: string };
+        Returns: { fecha: string; cantidad: number }[];
+      };
+      fn_rendimiento_por_servicio: {
+        Args: { p_desde: string; p_hasta: string };
+        Returns: {
+          especialidad_id: string;
+          nombre_servicio: string;
+          total_atenciones: number;
+          tpe_minutos: number | null;
+          tpa_minutos: number | null;
+        }[];
+      };
+      fn_rendimiento_por_agente: {
+        Args: { p_desde: string; p_hasta: string };
+        Returns: {
+          agente_id: string;
+          nombre_agente: string;
+          total_atenciones: number;
+          tpa_minutos: number | null;
+        }[];
+      };
     };
 
     Enums: {

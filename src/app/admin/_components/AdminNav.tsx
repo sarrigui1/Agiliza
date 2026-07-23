@@ -2,14 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings, Radar, Building2 } from 'lucide-react';
+import { Settings, Radar, Building2, LayoutDashboard, FileBarChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SignOutButton } from '@/components/shared/SignOutButton';
 
 const LINKS = [
+  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/admin/settings', label: 'Configuración', icon: Settings },
   { href: '/admin/supervisor', label: 'Supervisión', icon: Radar },
   { href: '/admin/infraestructura', label: 'Infraestructura', icon: Building2 },
+  { href: '/admin/reportes', label: 'Reportes', icon: FileBarChart },
 ];
 
 export function AdminNav() {

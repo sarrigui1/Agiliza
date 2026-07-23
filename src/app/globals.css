@@ -89,3 +89,15 @@ body {
 .animate-flash-in {
   animation: flash-in 1.2s ease-out;
 }
+
+/* /admin/reportes: resumen ejecutivo pensado para imprimir/guardar como PDF.
+   La app es dark-mode-only en pantalla, pero un PDF ejecutivo en fondo negro
+   gasta tinta y no es lo que espera un CEO — esta página se renderiza en claro
+   a propósito (ver ReporteView), y esta regla solo esconde el nav + controles
+   interactivos al imprimir, sin tocar el resto del tema oscuro de la app. */
+@media print {
+  nav,
+  .no-print {
+    display: none !important;
+  }
+}
