@@ -17,10 +17,12 @@ type Paso = 'landing' | 'cita-documento' | 'cita-resultados' | 'espontaneo';
 interface CheckinFlowProps {
   especialidades: Especialidad[];
   zonas: Zona[];
+  permitirCitasProgramadas: boolean;
 }
 
-export function CheckinFlow({ especialidades, zonas }: CheckinFlowProps) {
-  const [paso, setPaso] = useState<Paso>('landing');
+export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }: CheckinFlowProps) {
+  const pasoInicial: Paso = permitirCitasProgramadas ? 'landing' : 'espontaneo';
+  const [paso, setPaso] = useState<Paso>(pasoInicial);
   const [documento, setDocumento] = useState('');
   const [citas, setCitas] = useState<CitaEncontrada[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +31,7 @@ export function CheckinFlow({ especialidades, zonas }: CheckinFlowProps) {
   const { hora, fecha } = useClock();
 
   function reiniciar() {
-    setPaso('landing');
+    setPaso(pasoInicial);
     setDocumento('');
     setCitas([]);
     setError(null);
@@ -113,6 +115,20 @@ export function CheckinFlow({ especialidades, zonas }: CheckinFlowProps) {
               confirmDisabled={documento.length < 5}
               label="Ingrese su número de documento o cédula"
             />
+            {error && (
+              <div className="mx-auto mt-6 flex max-w-md flex-col items-center gap-3 text-center">
+                <p className="text-sm text-muted">¿Deseas solicitar un turno espontáneo en su lugar?</p>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setError(null);
+                    setPaso('espontaneo');
+                  }}
+                >
+                  Solicitar Turno Espontáneo
+                </Button>
+              </div>
+            )}
           </div>
         )}
 

@@ -150,6 +150,7 @@ export interface Database {
           reingreso_penalizado: boolean;
           formato_privacidad_tv: FormatoPrivacidadTv;
           modo_audio_tv: ModoAudioTv;
+          permitir_citas_programadas: boolean;
           intercalado_preferencial: number;
           intercalado_normal: number;
           updated_at: string;

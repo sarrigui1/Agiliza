@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings, Radar, Building2, LayoutDashboard, FileBarChart } from 'lucide-react';
+import { Settings, Radar, Building2, LayoutDashboard, FileBarChart, CalendarClock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SignOutButton } from '@/components/shared/SignOutButton';
 
@@ -11,6 +11,7 @@ const LINKS = [
   { href: '/admin/settings', label: 'Configuración', icon: Settings },
   { href: '/admin/supervisor', label: 'Supervisión', icon: Radar },
   { href: '/admin/infraestructura', label: 'Infraestructura', icon: Building2 },
+  { href: '/admin/citas', label: 'Citas', icon: CalendarClock },
   { href: '/admin/reportes', label: 'Reportes', icon: FileBarChart },
 ];
 

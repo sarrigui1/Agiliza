@@ -89,13 +89,21 @@ export async function buscarTurnoProgramado(
     return fail('No se pudo cargar la configuración del sistema.');
   }
 
+  const inicioDelDia = new Date();
+  inicioDelDia.setHours(0, 0, 0, 0);
+  const finDelDia = new Date();
+  finDelDia.setHours(23, 59, 59, 999);
+
   // El QR puede traer el documento del paciente o el código de ticket ya emitido
   // (ej. si se reimprime la cita); se acepta cualquiera de las dos coincidencias.
+  // Solo interesa la agenda del día: una cita de otra fecha no debe poder hacer check-in hoy.
   const { data: turnos, error } = await supabase
     .from('turnos')
     .select('*')
     .eq('estado', 'programado')
     .or(`documento_paciente.eq.${valor},codigo.eq.${valor}`)
+    .gte('hora_cita', inicioDelDia.toISOString())
+    .lte('hora_cita', finDelDia.toISOString())
     .order('hora_cita', { ascending: true });
 
   if (error) {
@@ -103,7 +111,7 @@ export async function buscarTurnoProgramado(
   }
 
   if (!turnos || turnos.length === 0) {
-    return fail('No se encontró una cita programada con ese documento o código.');
+    return fail('No encontramos una cita agendada para hoy con este documento o código.');
   }
 
   const ahora = Date.now();

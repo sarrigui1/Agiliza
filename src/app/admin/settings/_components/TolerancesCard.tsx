@@ -1,11 +1,14 @@
 import { Clock } from 'lucide-react';
 import { Card, CardTitle } from '@/components/ui/Card';
+import { Toggle } from '@/components/ui/Toggle';
 
 interface TolerancesCardProps {
+  permitirCitasProgramadas: boolean;
   minutosCheckinPrevio: number;
   minutosTolerancia: number;
   segundosIntervaloRellamado: number;
   onChange: (patch: Partial<{
+    permitir_citas_programadas: boolean;
     minutos_checkin_previo: number;
     minutos_tolerancia: number;
     segundos_intervalo_rellamado: number;
@@ -41,6 +44,7 @@ function CampoNumerico({
 }
 
 export function TolerancesCard({
+  permitirCitasProgramadas,
   minutosCheckinPrevio,
   minutosTolerancia,
   segundosIntervaloRellamado,
@@ -52,6 +56,15 @@ export function TolerancesCard({
         <Clock className="size-5 text-primary" />
         Tiempos y Tolerancia
       </CardTitle>
+
+      <div className="mb-6 border-b border-border pb-6">
+        <Toggle
+          checked={permitirCitasProgramadas}
+          onChange={(v) => onChange({ permitir_citas_programadas: v })}
+          label="Módulo de Citas Programadas / Agenda"
+          description="Habilita el flujo de 'Tengo Cita Programada' en Check-In. Si está apagado, el tótem entra directo al registro de turno."
+        />
+      </div>
 
       <div className="flex flex-col gap-4">
         <CampoNumerico
