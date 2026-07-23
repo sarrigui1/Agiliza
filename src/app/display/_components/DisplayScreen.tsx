@@ -25,6 +25,17 @@ export function DisplayScreen({ zona, initialCalls, modoAudio }: DisplayScreenPr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [anunciar]);
 
+  // Muchos TVs corren con un control remoto (sin mouse ni touch): un click exacto sobre
+  // el botón de activación puede no llegar nunca si el foco D-pad no cae encima. Cualquier
+  // tecla del remoto ya cuenta como gesto de usuario válido para el navegador, así que se
+  // habilita el audio con la primera tecla presionada, sin depender del foco.
+  useEffect(() => {
+    if (habilitado) return;
+    const onKeyDown = () => habilitar();
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [habilitado, habilitar]);
+
   const actual = calls[0] ?? null;
   const recientes = calls.slice(1, 5);
 
@@ -33,12 +44,13 @@ export function DisplayScreen({ zona, initialCalls, modoAudio }: DisplayScreenPr
       {!habilitado && (
         <button
           type="button"
+          autoFocus
           onClick={habilitar}
           className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-4 bg-bg/95 backdrop-blur-sm"
         >
           <Volume2 className="size-12 text-primary" />
           <p className="font-mono text-lg uppercase tracking-widest text-text">
-            Toque la pantalla para activar el sonido
+            Presione cualquier tecla del control remoto para activar el sonido
           </p>
         </button>
       )}
