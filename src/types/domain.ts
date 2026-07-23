@@ -19,3 +19,8 @@ export function fail<T = never>(error: string): ActionResult<T> {
 export type CitaEncontrada = Turno & {
   fuera_de_horario: boolean;
 };
+
+/** Turno recién confirmado/creado en Check-In, con la estimación de espera ya calculada. */
+export type TurnoConEstimado = Turno & {
+  tiempoEstimadoMinutos: number;
+};

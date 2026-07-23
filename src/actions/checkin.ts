@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import { ok, fail, type ActionResult, type CitaEncontrada } from '@/types/domain';
+import { ok, fail, type ActionResult, type CitaEncontrada, type TurnoConEstimado } from '@/types/domain';
 import type { Turno } from '@/types/database';
 
 /**
@@ -14,6 +14,57 @@ import type { Turno } from '@/types/database';
  * dispositivo debe estar autenticado con una cuenta de servicio de rol 'recepcion' —
  * este archivo asume que existe una sesión de Supabase activa al ejecutarse.
  */
+
+/** TPA de respaldo cuando todavía no hay ningún turno finalizado hoy en esa especialidad. */
+const TPA_MINUTOS_POR_DEFECTO = 10;
+
+/**
+ * Tiempo estimado de espera para un turno recién confirmado/creado:
+ * (turnos 'en_espera' que ya estaban delante, misma especialidad+zona) × (TPA real de
+ * hoy para esa especialidad, o el valor de respaldo si aún no hay datos).
+ *
+ * No usa `fn_rendimiento_por_servicio` (la RPC de analítica) a propósito — esa consulta
+ * trae el desglose de TODAS las especialidades para un rango arbitrario; acá solo hace
+ * falta una, para "hoy", así que una consulta directa es más simple y evita acoplar el
+ * flujo de Check-In al módulo de Analytics.
+ */
+async function calcularTiempoEstimado(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  especialidadId: string,
+  zonaId: string,
+): Promise<number> {
+  const inicioDelDia = new Date();
+  inicioDelDia.setHours(0, 0, 0, 0);
+
+  const [{ count: enEspera }, { data: finalizadosHoy }] = await Promise.all([
+    supabase
+      .from('turnos')
+      .select('id', { count: 'exact', head: true })
+      .eq('especialidad_id', especialidadId)
+      .eq('zona_id', zonaId)
+      .eq('estado', 'en_espera'),
+    supabase
+      .from('turnos')
+      .select('hora_atencion, hora_finalizacion')
+      .eq('especialidad_id', especialidadId)
+      .eq('estado', 'finalizado')
+      .gte('hora_llegada', inicioDelDia.toISOString()),
+  ]);
+
+  // El propio turno recién confirmado ya cuenta como 'en_espera' -> se excluye.
+  const turnosAdelante = Math.max(0, (enEspera ?? 1) - 1);
+
+  const duraciones = (finalizadosHoy ?? [])
+    .filter((t) => t.hora_atencion && t.hora_finalizacion)
+    .map((t) => (new Date(t.hora_finalizacion!).getTime() - new Date(t.hora_atencion!).getTime()) / 60_000);
+
+  const tpaMinutos =
+    duraciones.length > 0
+      ? duraciones.reduce((a, b) => a + b, 0) / duraciones.length
+      : TPA_MINUTOS_POR_DEFECTO;
+
+  return Math.round(turnosAdelante * tpaMinutos);
+}
 
 // ---------------------------------------------------------------------------------------
 // 1) Validar cita por documento o código QR (Check-In de Agenda Previa)
@@ -75,7 +126,7 @@ export async function buscarTurnoProgramado(
 // ---------------------------------------------------------------------------------------
 // 2) Confirmar el check-in de una cita programada -> pasa a 'en_espera'
 // ---------------------------------------------------------------------------------------
-export async function confirmarCheckIn(turnoId: string): Promise<ActionResult<Turno>> {
+export async function confirmarCheckIn(turnoId: string): Promise<ActionResult<TurnoConEstimado>> {
   const supabase = await createClient();
 
   const {
@@ -95,8 +146,11 @@ export async function confirmarCheckIn(turnoId: string): Promise<ActionResult<Tu
     return fail(error.message);
   }
 
+  const turno = data as Turno;
+  const tiempoEstimadoMinutos = await calcularTiempoEstimado(supabase, turno.especialidad_id, turno.zona_id);
+
   revalidatePath('/checkin');
-  return ok(data as Turno);
+  return ok({ ...turno, tiempoEstimadoMinutos });
 }
 
 // ---------------------------------------------------------------------------------------
@@ -112,7 +166,7 @@ export interface CrearTurnoEspontaneoInput {
 
 export async function crearTurnoEspontaneo(
   input: CrearTurnoEspontaneoInput,
-): Promise<ActionResult<Turno>> {
+): Promise<ActionResult<TurnoConEstimado>> {
   const documento = input.documento.trim();
   const nombre = input.nombre.trim();
 
@@ -164,6 +218,8 @@ export async function crearTurnoEspontaneo(
     return fail(errorInsert.message);
   }
 
+  const tiempoEstimadoMinutos = await calcularTiempoEstimado(supabase, input.especialidadId, input.zonaId);
+
   revalidatePath('/checkin');
-  return ok(turno as Turno);
+  return ok({ ...(turno as Turno), tiempoEstimadoMinutos });
 }

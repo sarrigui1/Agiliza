@@ -8,8 +8,8 @@ import { Toggle } from '@/components/ui/Toggle';
 import { NumericKeypad } from '@/components/ui/NumericKeypad';
 import { useClock } from '@/hooks/useClock';
 import { buscarTurnoProgramado, confirmarCheckIn, crearTurnoEspontaneo } from '@/actions/checkin';
-import type { Especialidad, Turno, Zona } from '@/types/database';
-import type { CitaEncontrada } from '@/types/domain';
+import type { Especialidad, Zona } from '@/types/database';
+import type { CitaEncontrada, TurnoConEstimado } from '@/types/domain';
 import { TicketModal } from './TicketModal';
 
 type Paso = 'landing' | 'cita-documento' | 'cita-resultados' | 'espontaneo';
@@ -24,7 +24,7 @@ export function CheckinFlow({ especialidades, zonas }: CheckinFlowProps) {
   const [documento, setDocumento] = useState('');
   const [citas, setCitas] = useState<CitaEncontrada[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [ticket, setTicket] = useState<Turno | null>(null);
+  const [ticket, setTicket] = useState<TurnoConEstimado | null>(null);
   const [isPending, startTransition] = useTransition();
   const { hora, fecha } = useClock();
 
@@ -223,7 +223,7 @@ function EspontaneoForm({
   especialidades: Especialidad[];
   zonas: Zona[];
   onCancelar: () => void;
-  onCreado: (t: Turno) => void;
+  onCreado: (t: TurnoConEstimado) => void;
 }) {
   const [nombre, setNombre] = useState('');
   const [documento, setDocumento] = useState('');
