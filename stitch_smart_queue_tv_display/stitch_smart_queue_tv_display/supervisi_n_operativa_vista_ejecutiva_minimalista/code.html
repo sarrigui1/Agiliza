@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Supervisión Operativa - Minimal Executive Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-high": "#23293c",
+                    "secondary": "#ffffff",
+                    "on-surface": "#dce1fb",
+                    "tertiary-container": "#dddddd",
+                    "secondary-fixed": "#00fbfb",
+                    "surface-container-low": "#151b2d",
+                    "surface-container": "#191f31",
+                    "surface-container-lowest": "#070d1f",
+                    "on-secondary-container": "#007070",
+                    "primary-container": "#39ff14",
+                    "surface-dim": "#0c1324",
+                    "primary-fixed": "#79ff5b",
+                    "surface-bright": "#33394c",
+                    "inverse-primary": "#106e00",
+                    "surface-variant": "#2e3447",
+                    "on-primary-container": "#107100",
+                    "on-primary": "#053900",
+                    "on-error": "#690005",
+                    "tertiary-fixed": "#e2e2e2",
+                    "error-container": "#93000a",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "surface-container-highest": "#2e3447",
+                    "on-primary-fixed-variant": "#095300",
+                    "inverse-surface": "#dce1fb",
+                    "outline": "#85967c",
+                    "background": "#0c1324",
+                    "primary-fixed-dim": "#2ae500",
+                    "on-primary-fixed": "#022100",
+                    "on-tertiary": "#2f3131",
+                    "error": "#ffb4ab",
+                    "warning-amber": "#ffbf00",
+                    "outline-variant": "#3c4b35",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "secondary-fixed-dim": "#00dddd",
+                    "on-secondary-fixed": "#002020",
+                    "on-surface-variant": "#baccb0",
+                    "primary": "#efffe3",
+                    "inverse-on-surface": "#2a3043",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-secondary": "#003737",
+                    "surface-tint": "#2ae500",
+                    "secondary-container": "#00fbfb",
+                    "tertiary": "#f9fafa",
+                    "surface": "#0c1324",
+                    "on-error-container": "#ffdad6",
+                    "on-secondary-fixed-variant": "#004f4f",
+                    "on-tertiary-container": "#606162",
+                    "on-background": "#dce1fb"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-gap": "1.5rem",
+                    "section-margin": "5rem",
+                    "gutter": "2.5rem",
+                    "container-padding": "4rem"
+            },
+            "fontFamily": {
+                    "display-lg": ["Inter"],
+                    "code-lg": ["JetBrains Mono"],
+                    "label-caps": ["JetBrains Mono"],
+                    "display-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-sm": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0c1324;
+            color: #dce1fb;
+            overflow: hidden; /* Prevent scroll for 1920x1080 focus */
+            font-family: 'Inter', sans-serif;
+        }
+        .sonar-effect-mini {
+            position: relative;
+        }
+        .sonar-effect-mini::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 50%;
+            animation: sonar 2.5s infinite;
+            background: currentColor;
+            opacity: 0.4;
+        }
+        @keyframes sonar {
+            0% { transform: scale(1); opacity: 0.4; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .executive-border {
+            border: 1px solid rgba(133, 150, 124, 0.15);
+        }
+        .kpi-value {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+<!-- TopAppBar -->
+<header class="bg-surface-container-lowest fixed top-0 w-full z-50 h-[72px] border-b border-outline-variant flex justify-between items-center px-gutter">
+<div class="flex items-center gap-6">
+<span class="font-label-caps text-[14px] tracking-[0.2em] text-primary-fixed">QUEUE_CENTER</span>
+<div class="h-6 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-3">
+<h1 class="text-[18px] font-semibold text-on-surface uppercase tracking-tight">Supervisión Operativa</h1>
+<span class="flex items-center gap-1.5 bg-error/10 text-error px-2.5 py-0.5 rounded-full text-[11px] font-bold border border-error/20">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                ALERTA SATURACIÓN
+            </span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed animate-pulse"></span>
+<span class="text-[12px] text-on-surface-variant font-medium">Cierre: <span class="text-on-surface">00:00 hrs</span></span>
+</div>
+<button class="bg-primary-container text-on-primary-container text-[12px] font-bold px-4 py-1.5 rounded flex items-center gap-2 hover:brightness-110 transition-all active:scale-95">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+            REASIGNACIÓN_MASIVA
+        </button>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-variant p-2 rounded-full cursor-pointer transition-colors text-[20px]">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-variant p-2 rounded-full cursor-pointer transition-colors text-[20px]">settings</span>
+</div>
+</div>
+</header>
+<!-- SideNav -->
+<aside class="fixed left-0 top-[72px] h-[calc(100vh-72px)] w-[260px] bg-surface-container-lowest border-r border-outline-variant flex flex-col py-8 px-4 z-40">
+<nav class="flex-1 space-y-1">
+<div class="text-primary-fixed font-semibold bg-surface-variant/40 rounded-lg flex items-center gap-3 px-4 py-2.5 cursor-pointer">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="text-[14px]">Dashboard</span>
+</div>
+<div class="text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/20 flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+<span class="text-[14px]">Módulos</span>
+</div>
+<div class="text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/20 flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined text-[20px]">analytics</span>
+<span class="text-[14px]">Analítica</span>
+</div>
+<div class="text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/20 flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="text-[14px]">Historial</span>
+</div>
+<div class="text-on-surface-variant hover:text-on-surface hover:bg-surface-variant/20 flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all">
+<span class="material-symbols-outlined text-[20px]">report_problem</span>
+<span class="text-[14px]">Alertas</span>
+</div>
+</nav>
+<div class="mt-auto space-y-1 pt-6 border-t border-outline-variant/30">
+<div class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-primary-fixed cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[18px]">help</span>
+<span class="text-[13px]">Soporte Técnico</span>
+</div>
+<div class="flex items-center gap-3 px-4 py-2 text-on-surface-variant hover:text-error cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="text-[13px]">Cerrar Sesión</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] mt-[72px] p-gutter h-[calc(100vh-72px)] flex gap-8">
+<!-- Puestos Rows Section -->
+<section class="flex-1 flex flex-col gap-4 overflow-y-auto pr-2">
+<div class="flex justify-between items-center mb-2">
+<h2 class="text-[14px] font-bold text-on-surface-variant uppercase tracking-widest">Estatus de Terminales</h2>
+<div class="flex gap-4 text-[11px] text-on-surface-variant uppercase font-medium">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-primary-fixed"></span> Atendiendo</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-secondary-fixed"></span> Disponible</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-error"></span> Saturado</span>
+</div>
+</div>
+<!-- Row 1 -->
+<div class="flex items-center justify-between bg-surface-container-low executive-border p-4 rounded-xl hover:bg-surface-container transition-colors group">
+<div class="flex items-center gap-8 flex-1">
+<div class="w-24">
+<h3 class="text-[14px] font-bold text-on-surface">Módulo 1</h3>
+<p class="text-[12px] text-on-surface-variant truncate">Carlos Ruiz</p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-primary-fixed/5 border border-primary-fixed/20 rounded text-primary-fixed text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-fixed sonar-effect-mini"></span>
+                    ATENDIENDO - CAR-014
+                </div>
+<div class="flex gap-6 items-center border-l border-outline-variant/30 pl-8">
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">En espera</span>
+<span class="kpi-value text-[18px] text-primary-fixed">04</span>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">TPE</span>
+<span class="kpi-value text-[18px] text-on-surface">08 <small class="text-[12px]">min</small></span>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 text-[12px] font-semibold text-on-surface-variant hover:text-primary-fixed px-4 py-2 border border-transparent hover:border-primary-fixed/30 rounded transition-all">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+                Reasignar
+            </button>
+</div>
+<!-- Row 2 -->
+<div class="flex items-center justify-between bg-surface-container-low executive-border p-4 rounded-xl hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-8 flex-1">
+<div class="w-24">
+<h3 class="text-[14px] font-bold text-on-surface">Caja 1</h3>
+<p class="text-[12px] text-on-surface-variant">Roberto Luz</p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-secondary-fixed/5 border border-secondary-fixed/20 rounded text-secondary-fixed text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed"></span>
+                    DISPONIBLE
+                </div>
+<div class="flex gap-6 items-center border-l border-outline-variant/30 pl-8">
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">En espera</span>
+<span class="kpi-value text-[18px] text-secondary-fixed">02</span>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">TPE</span>
+<span class="kpi-value text-[18px] text-on-surface">04 <small class="text-[12px]">min</small></span>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 text-[12px] font-semibold text-on-surface-variant hover:text-primary-fixed px-4 py-2 border border-transparent hover:border-primary-fixed/30 rounded transition-all">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+                Reasignar
+            </button>
+</div>
+<!-- Row 3 (Saturated) -->
+<div class="flex items-center justify-between bg-surface-container-low border border-warning-amber/40 p-4 rounded-xl hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-8 flex-1">
+<div class="w-24">
+<h3 class="text-[14px] font-bold text-on-surface">Asesoría A</h3>
+<p class="text-[12px] text-on-surface-variant">Miguel Ángel</p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-warning-amber/10 border border-warning-amber/40 rounded text-warning-amber text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-warning-amber animate-pulse"></span>
+                    SATURACIÓN
+                </div>
+<div class="flex gap-6 items-center border-l border-outline-variant/30 pl-8">
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">En espera</span>
+<span class="kpi-value text-[18px] text-warning-amber">12</span>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">TPE</span>
+<span class="kpi-value text-[18px] text-warning-amber">18 <small class="text-[12px]">min</small></span>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 text-[12px] font-bold text-on-error bg-warning-amber px-4 py-2 rounded transition-all hover:brightness-110">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+                Intervenir
+            </button>
+</div>
+<!-- Row 4 -->
+<div class="flex items-center justify-between bg-surface-container-low executive-border p-4 rounded-xl hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-8 flex-1">
+<div class="w-24">
+<h3 class="text-[14px] font-bold text-on-surface">Caja 2</h3>
+<p class="text-[12px] text-on-surface-variant">Elena Sosa</p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-primary-fixed/5 border border-primary-fixed/20 rounded text-primary-fixed text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-fixed sonar-effect-mini"></span>
+                    ATENDIENDO - CAJ-098
+                </div>
+<div class="flex gap-6 items-center border-l border-outline-variant/30 pl-8">
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">En espera</span>
+<span class="kpi-value text-[18px] text-on-surface">03</span>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">TPE</span>
+<span class="kpi-value text-[18px] text-on-surface">06 <small class="text-[12px]">min</small></span>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 text-[12px] font-semibold text-on-surface-variant hover:text-primary-fixed px-4 py-2 border border-transparent hover:border-primary-fixed/30 rounded transition-all">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+                Reasignar
+            </button>
+</div>
+<!-- Row 5 (Paused) -->
+<div class="flex items-center justify-between bg-surface-container-low executive-border p-4 rounded-xl opacity-60">
+<div class="flex items-center gap-8 flex-1">
+<div class="w-24">
+<h3 class="text-[14px] font-bold text-on-surface">Módulo 2</h3>
+<p class="text-[12px] text-on-surface-variant">Ana Martínez</p>
+</div>
+<div class="flex items-center gap-2 px-3 py-1 bg-outline/10 border border-outline/20 rounded text-on-surface-variant text-[11px] font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                    EN PAUSA
+                </div>
+<div class="flex gap-6 items-center border-l border-outline-variant/30 pl-8">
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">En espera</span>
+<span class="kpi-value text-[18px]">--</span>
+</div>
+<div>
+<span class="text-[10px] text-on-surface-variant uppercase block font-medium">TPE</span>
+<span class="kpi-value text-[18px]">--</span>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 text-[12px] font-semibold text-on-surface-variant hover:text-primary-fixed px-4 py-2 border border-transparent hover:border-primary-fixed/30 rounded transition-all">
+<span class="material-symbols-outlined text-[16px]">sync_alt</span>
+                Reasignar
+            </button>
+</div>
+</section>
+<!-- Sidebar Métricas Section -->
+<aside class="w-[360px] flex flex-col gap-8">
+<!-- TPE por Área Card -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 flex flex-col gap-6">
+<h3 class="text-[12px] font-bold text-on-surface-variant uppercase tracking-[0.15em]">TPE por Área</h3>
+<div class="space-y-6">
+<div class="space-y-2">
+<div class="flex justify-between text-[13px]">
+<span class="text-on-surface font-medium">Cajas</span>
+<span class="kpi-value text-primary-fixed">04 min</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-primary-fixed h-full rounded-full" style="width: 30%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[13px]">
+<span class="text-on-surface font-medium">Atención Cliente</span>
+<span class="kpi-value text-warning-amber">12 min</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-warning-amber h-full rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[13px]">
+<span class="text-on-surface font-medium">Asesoría Especializada</span>
+<span class="kpi-value text-secondary-fixed">07 min</span>
+</div>
+<div class="w-full h-1 bg-surface-variant rounded-full overflow-hidden">
+<div class="bg-secondary-fixed h-full rounded-full" style="width: 50%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Resumen del Día KPIs -->
+<div class="bg-surface-container-lowest p-6 rounded-2xl border border-outline-variant/30 flex flex-col gap-6 flex-1">
+<h3 class="text-[12px] font-bold text-on-surface-variant uppercase tracking-[0.15em]">Resumen del Día</h3>
+<div class="grid grid-cols-1 gap-6 flex-1">
+<div class="flex flex-col justify-center items-center text-center p-4 border-b border-outline-variant/20">
+<span class="kpi-value text-[56px] text-primary-fixed leading-none">142</span>
+<span class="text-[12px] text-on-surface-variant font-medium mt-2 uppercase tracking-widest">Atendidos</span>
+</div>
+<div class="flex flex-col justify-center items-center text-center p-4">
+<span class="kpi-value text-[56px] text-error leading-none opacity-80">18</span>
+<span class="text-[12px] text-on-surface-variant font-medium mt-2 uppercase tracking-widest">Ausentes</span>
+</div>
+</div>
+<div class="mt-4 p-4 bg-surface-variant/20 rounded-lg">
+<p class="text-[11px] text-on-surface-variant italic leading-relaxed text-center">
+                    "Se recomienda reubicar 1 operador de Cajas a Atención al Cliente para optimizar tiempos."
+                </p>
+</div>
+</div>
+</aside>
+</main>
+<script>
+    // Micro-interaction for buttons
+    document.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const originalContent = this.innerHTML;
+            if (this.innerText.includes('Reasignar') || this.innerText.includes('Intervenir')) {
+                this.innerHTML = '<span class="material-symbols-outlined animate-spin text-[16px]">sync</span>';
+                this.classList.add('opacity-50');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalContent;
+                    this.classList.remove('opacity-50');
+                }, 1000);
+            }
+        });
+    });
+</script>
+</body></html>

@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/*
+ * Design system "Kinetic Neon Enterprise" (ver stitch_smart_queue_tv_display/.../DESIGN.md)
+ * Paleta fija oscura — esta aplicación no tiene modo claro, está pensada para displays
+ * de alto contraste (TVs, tótems, paneles operativos 24/7).
+ */
+@theme {
+  --color-bg: #0c1324;
+  --color-surface: #151b2d;
+  --color-surface-elevated: #191f31;
+  --color-surface-high: #23293c;
+  --color-border: #262c40;
+  --color-border-strong: #33394c;
+
+  --color-primary: #39ff14;
+  --color-primary-foreground: #04210a;
+  --color-secondary: #00fbfb;
+  --color-secondary-foreground: #003737;
+
+  --color-text: #dce1fb;
+  --color-muted: #8b93b4;
+
+  --color-danger: #ff5470;
+  --color-danger-foreground: #2b0008;
+  --color-warning: #f5a623;
+  --color-warning-foreground: #2b1900;
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+/* Resplandor neón usado en botones/cards activos (ver "Elevation & Depth" en DESIGN.md) */
+.glow-primary {
+  box-shadow: 0 0 30px color-mix(in srgb, var(--color-primary) 55%, transparent);
+}
+.glow-secondary {
+  box-shadow: 0 0 30px color-mix(in srgb, var(--color-secondary) 55%, transparent);
+}
+
+/* Sonar de los indicadores de estado (puntos de atención llamando activamente) */
+@keyframes sonar-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+.animate-sonar {
+  animation: sonar-pulse 1.6s ease-out infinite;
+}
+
+/* Ticker inferior del TV Display */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+/* Destaque momentáneo al llegar un llamado nuevo por Realtime */
+@keyframes flash-in {
+  0% {
+    background-color: color-mix(in srgb, var(--color-primary) 25%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+.animate-flash-in {
+  animation: flash-in 1.2s ease-out;
+}

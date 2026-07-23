@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CONFIGURACIÓN DEL SISTEMA - Admin Panel</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "outline-variant": "#3c4b35",
+                    "on-primary-container": "#107100",
+                    "outline": "#85967c",
+                    "background": "#0c1324",
+                    "on-tertiary": "#2f3131",
+                    "on-secondary": "#003737",
+                    "secondary-fixed": "#00fbfb",
+                    "on-secondary-fixed-variant": "#004f4f",
+                    "surface-container-highest": "#2e3447",
+                    "on-primary-fixed": "#022100",
+                    "surface-container": "#191f31",
+                    "error": "#ffb4ab",
+                    "surface": "#0c1324",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "inverse-surface": "#dce1fb",
+                    "primary-container": "#39ff14",
+                    "on-surface-variant": "#baccb0",
+                    "primary-fixed": "#79ff5b",
+                    "secondary-container": "#00fbfb",
+                    "inverse-on-surface": "#2a3043",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "on-error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "surface-container-low": "#151b2d",
+                    "secondary-fixed-dim": "#00dddd",
+                    "on-background": "#dce1fb",
+                    "on-primary-fixed-variant": "#095300",
+                    "on-primary": "#053900",
+                    "surface-dim": "#0c1324",
+                    "surface-variant": "#2e3447",
+                    "surface-bright": "#33394c",
+                    "secondary": "#ffffff",
+                    "primary-fixed-dim": "#2ae500",
+                    "error-container": "#93000a",
+                    "on-secondary-fixed": "#002020",
+                    "on-surface": "#dce1fb",
+                    "inverse-primary": "#106e00",
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface-container-lowest": "#070d1f",
+                    "surface-container-high": "#23293c",
+                    "on-error": "#690005",
+                    "primary": "#efffe3",
+                    "on-tertiary-container": "#606162",
+                    "tertiary": "#f9fafa",
+                    "tertiary-container": "#dddddd",
+                    "surface-tint": "#2ae500",
+                    "on-secondary-container": "#007070"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-gap": "1rem",
+                    "section-margin": "2.5rem",
+                    "gutter": "1.5rem",
+                    "container-padding": "2rem"
+            },
+            "fontFamily": {
+                    "code-lg": ["JetBrains Mono"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-sm": ["Inter"],
+                    "display-md": ["Inter"]
+            },
+            "fontSize": {
+                    "code-lg": ["96px", {"lineHeight": "100px", "fontWeight": "700"}],
+                    "body-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                    "display-lg": ["120px", {"lineHeight": "120px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "label-caps": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "display-md": ["30px", {"lineHeight": "36px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #0c1324;
+            color: #dce1fb;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #070d1f;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2e3447;
+            border-radius: 10px;
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            cursor: pointer;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #191f31;
+            height: 0.375rem;
+            border-radius: 0.5rem;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -6px;
+            background-color: #39ff14;
+            height: 1.125rem;
+            width: 1.125rem;
+            border-radius: 50%;
+        }
+        .tooltip-trigger:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+<!-- Top Navigation -->
+<header class="bg-surface-container dark:bg-surface-container border-b border-outline-variant dark:border-outline-variant flex justify-between items-center w-full px-gutter h-20 z-50 fixed top-0">
+<div class="flex items-center gap-4">
+<span class="text-3xl font-bold text-primary-container dark:text-primary-container tracking-tight">CONFIGURACIÓN DEL SISTEMA</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="bg-primary-container text-on-primary-container font-semibold text-lg px-6 py-2 rounded-lg hover:bg-surface-bright transition-all active:scale-95 flex items-center gap-2 shadow-[0_0_10px_rgba(57,255,20,0.3)]">
+<span class="material-symbols-outlined text-xl">save</span>
+                GUARDAR CAMBIOS
+            </button>
+</div>
+</header>
+<div class="flex flex-1 pt-20">
+<!-- Sidebar Navigation -->
+<aside class="bg-surface-container-low dark:bg-surface-container-low border-r border-outline-variant dark:border-outline-variant fixed left-0 h-[calc(100vh-5rem)] w-72 flex flex-col py-6 px-4 gap-4">
+<div class="mb-4 px-4">
+<h2 class="text-xl font-semibold text-on-surface">Gestión de Turnos</h2>
+<p class="text-on-surface-variant font-label-caps text-xs opacity-70">Admin Panel</p>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container bg-primary-container/20 border-l-2 border-primary-container rounded-r-lg font-bold transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings_input_component">settings_input_component</span>
+<span class="font-label-caps text-sm">Algoritmo</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="schedule">schedule</span>
+<span class="font-label-caps text-sm">Tiempos</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="person_off">person_off</span>
+<span class="font-label-caps text-sm">Ausencias</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="shield">shield</span>
+<span class="font-label-caps text-sm">Privacidad</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-72 flex-1 p-gutter overflow-y-auto custom-scrollbar">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter max-w-7xl mx-auto pb-12">
+<!-- CARD 1: ALGORITMO Y ORDENAMIENTO -->
+<section class="bg-surface-container border border-outline-variant p-5 rounded-xl neon-glow flex flex-col h-full">
+<div class="flex items-center gap-3 mb-4 relative group tooltip-trigger">
+<span class="material-symbols-outlined text-primary-container" style="font-size: 1.5rem;">settings_input_component</span>
+<h3 class="text-xl font-bold text-on-surface uppercase tracking-tight">ALGORITMO Y ORDENAMIENTO</h3>
+<div class="tooltip absolute -top-8 left-0 bg-surface-bright text-on-surface text-[10px] px-2 py-1 rounded opacity-0 invisible transition-all z-10 border border-outline-variant w-56 pointer-events-none">
+                            Define el criterio de prioridad para el despacho de tickets.
+                        </div>
+</div>
+<div class="space-y-3 flex-1">
+<div class="grid grid-cols-1 gap-2">
+<label class="relative flex items-center p-3 bg-surface-container-low border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<input checked="" class="w-4 h-4 text-primary-container bg-surface-container-lowest border-outline focus:ring-primary-container" name="algorithm" type="radio"/>
+<div class="ml-3">
+<span class="block text-sm font-bold text-on-surface">Por Hora de Cita</span>
+<span class="text-xs text-on-surface-variant">Prioriza pacientes con turno agendado.</span>
+</div>
+</label>
+<label class="relative flex items-center p-3 bg-surface-container-low border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<input class="w-4 h-4 text-primary-container bg-surface-container-lowest border-outline focus:ring-primary-container" name="algorithm" type="radio"/>
+<div class="ml-3">
+<span class="block text-sm font-bold text-on-surface">Por Orden de Llegada</span>
+<span class="text-xs text-on-surface-variant">Fila única basada en check-in manual.</span>
+</div>
+</label>
+<label class="relative flex items-center p-3 bg-surface-container-low border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-high transition-colors">
+<input class="w-4 h-4 text-primary-container bg-surface-container-lowest border-outline focus:ring-primary-container" name="algorithm" type="radio"/>
+<div class="ml-3">
+<span class="block text-sm font-bold text-on-surface">Híbrido</span>
+<span class="text-xs text-on-surface-variant">Balance dinámico entre citas y demanda.</span>
+</div>
+</label>
+</div>
+<div class="pt-2">
+<div class="flex justify-between mb-2">
+<span class="font-label-caps text-[10px] text-on-surface-variant uppercase tracking-widest">Intercalado de Prioridad</span>
+<span class="font-bold text-sm text-primary-container" id="intercalado-val">3:1</span>
+</div>
+<input class="w-full" max="10" min="1" oninput="document.getElementById('intercalado-val').innerText = this.value + ':1'" type="range" value="3"/>
+</div>
+</div>
+</section>
+<!-- CARD 2: TIEMPOS Y TOLERANCIA -->
+<section class="bg-surface-container border border-outline-variant p-5 rounded-xl neon-glow flex flex-col h-full">
+<div class="flex items-center gap-3 mb-4 tooltip-trigger relative">
+<span class="material-symbols-outlined text-primary-container" style="font-size: 1.5rem;">schedule</span>
+<h3 class="text-xl font-bold text-on-surface uppercase tracking-tight">TIEMPOS Y TOLERANCIA</h3>
+</div>
+<div class="space-y-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-[11px] font-label-caps text-on-surface-variant uppercase tracking-widest">Check-In previo (min)</label>
+<div class="flex items-center bg-surface-container-low border border-outline-variant rounded-lg px-3 py-1.5 focus-within:border-primary-container transition-colors">
+<input class="bg-transparent border-none focus:ring-0 text-on-surface w-full font-mono text-base" type="number" value="15"/>
+<span class="text-on-surface-variant text-[10px] font-bold">MIN</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-[11px] font-label-caps text-on-surface-variant uppercase tracking-widest">Tolerancia retraso (min)</label>
+<div class="flex items-center bg-surface-container-low border border-outline-variant rounded-lg px-3 py-1.5 focus-within:border-primary-container transition-colors">
+<input class="bg-transparent border-none focus:ring-0 text-on-surface w-full font-mono text-base" type="number" value="10"/>
+<span class="text-on-surface-variant text-[10px] font-bold">MIN</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-[11px] font-label-caps text-on-surface-variant uppercase tracking-widest">Intervalo re-llamado (seg)</label>
+<div class="flex items-center bg-surface-container-low border border-outline-variant rounded-lg px-3 py-1.5 focus-within:border-primary-container transition-colors">
+<input class="bg-transparent border-none focus:ring-0 text-on-surface w-full font-mono text-base" type="number" value="30"/>
+<span class="text-on-surface-variant text-[10px] font-bold">SEG</span>
+</div>
+</div>
+</div>
+</section>
+<!-- CARD 3: GESTIÓN DE AUSENCIAS -->
+<section class="bg-surface-container border border-outline-variant p-5 rounded-xl neon-glow flex flex-col h-full">
+<div class="flex items-center gap-3 mb-4 tooltip-trigger relative">
+<span class="material-symbols-outlined text-primary-container" style="font-size: 1.5rem;">person_off</span>
+<h3 class="text-xl font-bold text-on-surface uppercase tracking-tight">GESTIÓN DE AUSENCIAS</h3>
+</div>
+<div class="space-y-5">
+<div>
+<label class="text-[11px] font-label-caps text-on-surface-variant uppercase block mb-2 tracking-widest">Límite de llamados</label>
+<div class="flex items-center gap-3">
+<button class="w-9 h-9 flex items-center justify-center border border-outline-variant rounded-lg hover:bg-surface-container-high text-primary-container transition-colors" onclick="this.nextElementSibling.stepDown()">
+<span class="material-symbols-outlined text-xl">remove</span>
+</button>
+<input class="w-16 text-center bg-surface-container-low border border-outline-variant rounded-lg py-1.5 font-mono text-lg focus:ring-primary-container focus:border-primary-container" type="number" value="3"/>
+<button class="w-9 h-9 flex items-center justify-center border border-outline-variant rounded-lg hover:bg-surface-container-high text-primary-container transition-colors" onclick="this.previousElementSibling.stepUp()">
+<span class="material-symbols-outlined text-xl">add</span>
+</button>
+<span class="text-on-surface-variant text-[11px] leading-tight">intentos antes de<br/>marcar ausente</span>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 bg-surface-container-low border border-outline-variant rounded-lg">
+<div class="pr-2">
+<span class="block text-sm font-bold text-on-surface">Reingreso penalizado</span>
+<span class="text-[11px] text-on-surface-variant leading-tight">Si llega tarde, se reencola al final.</span>
+</div>
+<label class="inline-flex relative items-center cursor-pointer shrink-0">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- CARD 4: PRIVACIDAD (TVs) -->
+<section class="bg-surface-container border border-outline-variant p-5 rounded-xl neon-glow flex flex-col h-full">
+<div class="flex items-center gap-3 mb-4 tooltip-trigger relative">
+<span class="material-symbols-outlined text-primary-container" style="font-size: 1.5rem;">shield</span>
+<h3 class="text-xl font-bold text-on-surface uppercase tracking-tight">PRIVACIDAD (TVs)</h3>
+</div>
+<div class="space-y-4">
+<p class="text-[11px] font-label-caps text-on-surface-variant uppercase tracking-widest">Nivel de Anonimización</p>
+<div class="space-y-2">
+<label class="flex items-center gap-3 p-3 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-all cursor-pointer group">
+<input checked="" class="w-4 h-4 text-primary-container bg-surface-container-lowest border-outline focus:ring-primary-container" name="privacy" type="radio"/>
+<div class="flex-1">
+<span class="text-sm font-bold block">Solo Código</span>
+<span class="text-[10px] text-on-surface-variant font-mono">Ej: TKT-A12</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary-container transition-colors text-lg">lock</span>
+</label>
+<label class="flex items-center gap-3 p-3 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-all cursor-pointer group">
+<input class="w-4 h-4 text-primary-container bg-surface-container-lowest border-outline focus:ring-primary-container" name="privacy" type="radio"/>
+<div class="flex-1">
+<span class="text-sm font-bold block">Iniciales + ID Parcial</span>
+<span class="text-[10px] text-on-surface-variant font-mono">Ej: J.P. (***456)</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary-container transition-colors text-lg">visibility_off</span>
+</label>
+<label class="flex items-center gap-3 p-3 border border-outline-variant rounded-lg hover:bg-surface-container-low transition-all cursor-pointer group">
+<input class="w-4 h-4 text-primary-container bg-surface-container-lowest border-outline focus:ring-primary-container" name="privacy" type="radio"/>
+<div class="flex-1">
+<span class="text-sm font-bold block">Nombre Completo</span>
+<span class="text-[10px] text-on-surface-variant font-mono">Ej: Juan Perez</span>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary-container transition-colors text-lg">visibility</span>
+</label>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+<!-- Footer -->
+<footer class="fixed bottom-0 left-0 w-full z-50 flex justify-between items-center px-gutter h-14 bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-primary-container/30 shadow-lg">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 bg-primary-container rounded-full animate-pulse shadow-[0_0_8px_#39ff14]"></div>
+<p class="font-label-caps text-xs text-secondary-fixed">Sincronización: Activa (Hace 2 min)</p>
+</div>
+<div class="flex gap-6">
+<a class="font-label-caps text-xs text-on-surface-variant hover:text-primary-fixed-dim transition-colors" href="#">Soporte</a>
+<a class="font-label-caps text-xs text-on-surface-variant hover:text-primary-fixed-dim transition-colors" href="#">Documentación</a>
+</div>
+</footer>
+<script>
+        // Micro-interaction logic
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('change', () => {
+                input.parentElement.classList.add('border-primary-container');
+                setTimeout(() => {
+                    input.parentElement.classList.remove('border-primary-container');
+                }, 1000);
+            });
+        });
+
+        // Prevention of accidental close
+        window.onbeforeunload = function() {
+            return "Existen cambios sin guardar. ¿Deseas salir?";
+        };
+    </script>
+</body></html>

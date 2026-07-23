@@ -1,0 +1,373 @@
+<!DOCTYPE html><html lang="es" class="dark" style=""><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        try {
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        "colors": {
+                            "surface-container-lowest": "#070d1f",
+                            "on-secondary-container": "#007070",
+                            "on-secondary-fixed": "#002020",
+                            "surface-container": "#191f31",
+                            "secondary-fixed": "#00fbfb",
+                            "primary": "#efffe3",
+                            "surface-container-high": "#23293c",
+                            "surface": "#0c1324",
+                            "on-surface": "#dce1fb",
+                            "on-tertiary-fixed": "#1a1c1c",
+                            "on-primary": "#053900",
+                            "primary-fixed-dim": "#2ae500",
+                            "tertiary-fixed-dim": "#c6c6c7",
+                            "outline-variant": "#3c4b35",
+                            "inverse-surface": "#dce1fb",
+                            "secondary-fixed-dim": "#00dddd",
+                            "surface-bright": "#33394c",
+                            "surface-container-low": "#151b2d",
+                            "error": "#ffb4ab",
+                            "primary-fixed": "#79ff5b",
+                            "on-secondary": "#003737",
+                            "secondary-container": "#00fbfb",
+                            "inverse-on-surface": "#2a3043",
+                            "on-background": "#dce1fb",
+                            "outline": "#85967c",
+                            "on-primary-fixed-variant": "#095300",
+                            "secondary": "#ffffff",
+                            "on-tertiary-fixed-variant": "#454747",
+                            "on-secondary-fixed-variant": "#004f4f",
+                            "background": "#0c1324",
+                            "tertiary": "#f9fafa",
+                            "surface-tint": "#2ae500",
+                            "on-primary-container": "#107100",
+                            "tertiary-container": "#dddddd",
+                            "surface-dim": "#0c1324",
+                            "on-primary-fixed": "#022100",
+                            "surface-container-highest": "#2e3447",
+                            "primary-container": "#39ff14",
+                            "on-tertiary-container": "#606162",
+                            "on-error": "#690005",
+                            "on-tertiary": "#2f3131",
+                            "tertiary-fixed": "#e2e2e2",
+                            "inverse-primary": "#106e00",
+                            "on-error-container": "#ffdad6",
+                            "error-container": "#93000a",
+                            "surface-variant": "#2e3447",
+                            "on-surface-variant": "#baccb0"
+                        },
+                        "borderRadius": {
+                            "DEFAULT": "0.125rem",
+                            "lg": "0.25rem",
+                            "xl": "0.5rem",
+                            "full": "0.75rem"
+                        },
+                        "spacing": {
+                            "stack-gap": "1.5rem",
+                            "gutter": "2rem",
+                            "section-margin": "5rem",
+                            "container-padding": "4rem"
+                        },
+                        "fontFamily": {
+                            "display-md": ["Inter"],
+                            "headline-sm": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "display-lg": ["Inter"],
+                            "code-lg": ["JetBrains Mono"],
+                            "label-caps": ["JetBrains Mono"]
+                        },
+                        "fontSize": {
+                            "display-md": ["80px", {"lineHeight": "80px", "fontWeight": "700"}],
+                            "headline-sm": ["48px", {"lineHeight": "56px", "fontWeight": "600"}],
+                            "body-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                            "display-lg": ["120px", {"lineHeight": "120px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                            "code-lg": ["96px", {"lineHeight": "100px", "fontWeight": "700"}],
+                            "label-caps": ["24px", {"lineHeight": "32px", "fontWeight": "500"}]
+                        }
+                    },
+                },
+            }
+        } catch (_e) {}
+    }catch(_e){}</script></head><body class="flex flex-row overflow-hidden font-body-lg bg-background text-on-background">
+    <!-- Sidebar Navigation -->
+    <aside class="flex flex-col h-screen sticky left-0 top-0 h-full bg-surface-container-lowest border-r border-outline-variant flex-shrink-0 w-64">
+        <div class="p-6 flex flex-col gap-2">
+            <div class="text-primary font-display-md text-4xl tracking-tighter leading-none mb-4">OPS_01</div>
+            <div class="flex items-center gap-3 p-3 rounded-lg bg-surface-container-high border-r-4 border-primary-fixed">
+                <div class="relative">
+                    <img class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNd_wtAli41Fhp1QyIm9EC892XY6TEah8y7iAesAFVsJoKvCkGdlBmmbXPR7BdecM0204X3xQt7fkW-uqK4VOJEu_waxOkVatutS2wipqO3qTxS4An-GoNtiPgSk0xy7c9pfkkxJ4bD4MSZKyNsfeOcnTnPWxAJbkBXKVwv3aE-DQSQehTiyHT_MWyRZ5P-0PDlSQ58Mvqs4hwlIk42S0J8NCUSACoG9LYwFofHfuofAGbM2BJy8ceLAlOCc4g6g1BuAYENoPdjL4">
+                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-primary-fixed-dim rounded-full border-2 border-surface-container-lowest"></span>
+                </div>
+                <div class="overflow-hidden">
+                    <div class="font-label-caps text-sm text-primary-fixed truncate">OPERADOR_01</div>
+                    <select class="bg-transparent border-none text-[10px] text-primary-fixed font-code-lg p-0 focus:ring-0 cursor-pointer uppercase tracking-widest">
+                        <option class="bg-surface-container-highest">Disponible</option>
+                        <option class="bg-surface-container-highest">En Pausa</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <nav class="flex-grow px-4 space-y-1 overflow-y-auto">
+            <a class="flex items-center gap-4 p-3 rounded-lg text-primary-fixed bg-surface-container-high border-r-4 border-primary-fixed transition-all" href="#">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-caps text-sm">Dashboard</span>
+            </a>
+            <a class="flex items-center gap-4 p-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all" href="#">
+                <span class="material-symbols-outlined">list_alt</span>
+                <span class="font-label-caps text-sm">Cola en Vivo</span>
+            </a>
+            <a class="flex items-center gap-4 p-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all" href="#">
+                <span class="material-symbols-outlined">analytics</span>
+                <span class="font-label-caps text-sm">Analíticas</span>
+            </a>
+            <a class="flex items-center gap-4 p-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all" href="#">
+                <span class="material-symbols-outlined">history</span>
+                <span class="font-label-caps text-sm">Registro</span>
+            </a>
+            <a class="flex items-center gap-4 p-3 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-all" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-caps text-sm">Configuración</span>
+            </a>
+        </nav>
+        <div class="p-6 border-t border-outline-variant">
+            <a class="flex items-center gap-3 text-on-surface-variant hover:text-primary transition-colors mb-4" href="#">
+                <span class="material-symbols-outlined text-sm">support_agent</span>
+                <span class="text-xs uppercase tracking-widest font-bold">Soporte</span>
+            </a>
+            <a class="flex items-center gap-3 text-on-surface-variant hover:text-primary transition-colors mb-4" href="#">
+                <span class="material-symbols-outlined text-sm">tune</span>
+                <span class="text-xs uppercase tracking-widest font-bold">Ajustes</span>
+            </a>
+            <a class="flex items-center gap-3 text-on-surface-variant hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined text-sm">logout</span>
+                <span class="text-xs uppercase tracking-widest font-bold">Cerrar Sesión</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col h-screen relative overflow-hidden">
+        <!-- Top App Bar -->
+        <header class="flex justify-between items-center px-8 w-full h-24 bg-surface-container-low border-b border-primary-fixed-dim/20 shadow-[0_0_30px_rgba(42,229,0,0.1)] z-10">
+            <div class="flex items-center gap-6">
+                <div class="font-display-md text-6xl font-extrabold text-primary tracking-tighter">PANEL OPERACIONES</div>
+                <div class="h-8 w-px bg-outline-variant"></div>
+                <div class="flex items-center gap-2">
+                    <span class="relative flex h-3 w-3">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary-fixed-dim opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-primary-fixed-dim"></span>
+                    </span>
+                    <span class="font-label-caps text-xs text-primary-fixed tracking-widest">EN TIEMPO REAL</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="flex gap-4">
+                    <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors cursor-pointer">sensors</span>
+                    <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors cursor-pointer">wifi_tethering</span>
+                    <div class="relative">
+                        <span class="material-symbols-outlined text-on-surface-variant hover:bg-surface-container-high p-2 rounded transition-colors cursor-pointer">notifications</span>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button class="px-6 py-2 border border-outline text-on-surface font-label-caps text-sm rounded hover:bg-surface-container-high transition-colors">Soporte</button>
+                    <button class="px-6 py-2 bg-primary-container text-on-primary-container font-label-caps text-sm rounded font-bold shadow-[0_0_15px_rgba(57,255,20,0.4)] hover:brightness-110 active:scale-95 transition-all uppercase">Operar</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Workspace Canvas -->
+        <div class="flex-grow flex p-8 gap-8 overflow-hidden">
+            <div class="flex-[7] flex flex-col gap-8 overflow-hidden">
+                <!-- Active Ticket Card -->
+                <section class="bg-surface-container-low border border-outline-variant rounded-xl p-8 flex flex-col gap-6 relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-primary-fixed shadow-[0_0_20px_rgba(42,229,0,0.5)]"></div>
+                    <div class="flex justify-between items-start">
+                        <div class="flex-grow">
+                            <div class="font-label-caps text-on-surface-variant text-sm mb-1 uppercase tracking-[0.2em]">TURNO EN ATENCIÓN</div>
+                            <div class="flex items-center gap-4">
+                                <h1 class="font-code-lg text-7xl text-primary tracking-tighter leading-none">CAR-014</h1>
+                                <div class="px-3 py-1 bg-primary-fixed/10 border border-primary-fixed/30 rounded text-primary-fixed font-label-caps text-xs">SESIÓN_ACTIVA</div>
+                            </div>
+                            <div class="mt-6 flex gap-12">
+                                <div>
+                                    <div class="text-xs text-on-surface-variant uppercase font-bold tracking-widest mb-1">SERVICIO</div>
+                                    <div class="font-headline-sm text-2xl text-secondary whitespace-nowrap">Atención al Cliente</div>
+                                </div>
+                                <div class="h-12 w-px bg-outline-variant"></div>
+                                <div>
+                                    <div class="text-xs text-on-surface-variant uppercase font-bold tracking-widest mb-1">DURACIÓN</div>
+                                    <div class="font-code-lg text-4xl text-primary-fixed-dim" id="timer">04:25 min</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Actions Grid -->
+                        <div class="flex flex-col gap-3 min-w-[280px]">
+                            <button class="w-full bg-primary-fixed text-on-primary-fixed font-display-md text-xl py-4 rounded-xl font-black shadow-[0_0_40px_rgba(121,255,91,0.3)] hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-tight">LLAMAR SIGUIENTE</button>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button class="flex flex-col items-center justify-center gap-1 p-4 bg-surface-container-high border border-outline-variant rounded-lg hover:bg-surface-container-highest hover:text-primary transition-all text-[10px] font-bold uppercase tracking-wider group">
+                                    <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">campaign</span>
+                                    <span class="">Re-Llamar</span>
+                                </button>
+                                <button class="flex flex-col items-center justify-center gap-1 p-4 bg-surface-container-high border border-outline-variant rounded-lg hover:bg-surface-container-highest hover:text-primary transition-all text-[10px] font-bold uppercase tracking-wider group">
+                                    <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">task_alt</span>
+                                    <span class="">Finalizar</span>
+                                </button>
+                                <button class="flex flex-col items-center justify-center gap-1 p-4 bg-surface-container-high border border-outline-variant rounded-lg hover:bg-surface-container-highest hover:text-error transition-all text-[10px] font-bold uppercase tracking-wider group">
+                                    <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">person_off</span>
+                                    <span class="">Ausente</span>
+                                </button>
+                                <button class="flex flex-col items-center justify-center gap-1 p-4 bg-surface-container-high border border-outline-variant rounded-lg hover:bg-surface-container-highest hover:text-secondary-fixed transition-all text-[10px] font-bold uppercase tracking-wider group">
+                                    <span class="material-symbols-outlined text-xl group-hover:scale-110 transition-transform">move_up</span>
+                                    <span class="">Derivar</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Waiting Queue Table -->
+                <section class="bg-surface-container rounded-xl border border-outline-variant flex flex-col flex-grow overflow-hidden">
+                    <div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-primary-fixed">format_list_numbered</span>
+                            <h2 class="font-label-caps text-lg uppercase tracking-widest text-primary-fixed">COLA DE ESPERA EN VIVO</h2>
+                        </div>
+                        <div class="text-xs text-on-surface-variant font-code-lg">ACTUALIZANDO EN 05S</div>
+                    </div>
+                    <div class="flex-grow overflow-y-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="sticky top-0 bg-surface-container-high z-10 text-[10px] uppercase tracking-[0.2em] text-on-surface-variant font-bold">
+                                <tr>
+                                    <th class="px-6 py-4 border-b border-outline-variant">POS</th>
+                                    <th class="px-6 py-4 border-b border-outline-variant">TURNO</th>
+                                    <th class="px-6 py-4 border-b border-outline-variant">CATEGORÍA</th>
+                                    <th class="px-6 py-4 border-b border-outline-variant">LLEGADA</th>
+                                    <th class="px-6 py-4 border-b border-outline-variant">ESPERA</th>
+                                    <th class="px-6 py-4 border-b border-outline-variant text-right">ACCIONES</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-outline-variant/30">
+                                <tr class="hover:bg-surface-container-highest transition-colors group">
+                                    <td class="px-6 py-5 font-code-lg text-primary-fixed text-lg">#01</td>
+                                    <td class="px-6 py-5 font-code-lg text-secondary text-xl">FIN-092</td>
+                                    <td class="px-6 py-5">
+                                        <span class="px-3 py-1 bg-primary-container/10 text-primary-fixed-dim border border-primary-fixed-dim/30 rounded text-[10px] font-bold uppercase tracking-wider">Cita Programada</span>
+                                    </td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">09:12</td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-error">12:45 min</td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="p-2 bg-primary-container/10 border border-primary-fixed/30 rounded-full text-primary-fixed hover:bg-primary-fixed hover:text-on-primary-fixed transition-all"><span class="material-symbols-outlined text-sm leading-none">call</span></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-highest transition-colors group">
+                                    <td class="px-6 py-5 font-code-lg text-on-surface-variant text-lg">#02</td>
+                                    <td class="px-6 py-5 font-code-lg text-secondary text-xl">GEN-115</td>
+                                    <td class="px-6 py-5">
+                                        <span class="px-3 py-1 bg-secondary-container/10 text-secondary-fixed border border-secondary-fixed/30 rounded text-[10px] font-bold uppercase tracking-wider">Demanda Espontánea</span>
+                                    </td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">09:15</td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">09:15 min</td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="p-2 bg-surface-container-highest border border-outline-variant rounded-full text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-sm leading-none">call</span></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-highest transition-colors group">
+                                    <td class="px-6 py-5 font-code-lg text-on-surface-variant text-lg">#03</td>
+                                    <td class="px-6 py-5 font-code-lg text-secondary text-xl">CAR-015</td>
+                                    <td class="px-6 py-5">
+                                        <span class="px-3 py-1 bg-tertiary-container/10 text-secondary border border-secondary/30 rounded text-[10px] font-bold uppercase tracking-wider">Preferencial</span>
+                                    </td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">09:18</td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">06:33 min</td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="p-2 bg-surface-container-highest border border-outline-variant rounded-full text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-sm leading-none">call</span></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-highest transition-colors group">
+                                    <td class="px-6 py-5 font-code-lg text-on-surface-variant text-lg">#04</td>
+                                    <td class="px-6 py-5 font-code-lg text-secondary text-xl">FIN-093</td>
+                                    <td class="px-6 py-5">
+                                        <span class="px-3 py-1 bg-surface-container-highest text-on-surface-variant border border-outline-variant rounded text-[10px] font-bold uppercase tracking-wider">Demanda Espontánea</span>
+                                    </td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">09:20</td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">04:00 min</td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="p-2 bg-surface-container-highest border border-outline-variant rounded-full text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-sm leading-none">call</span></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-surface-container-highest transition-colors group">
+                                    <td class="px-6 py-5 font-code-lg text-on-surface-variant text-lg">#05</td>
+                                    <td class="px-6 py-5 font-code-lg text-secondary text-xl">REC-002</td>
+                                    <td class="px-6 py-5">
+                                        <span class="px-3 py-1 bg-primary-container/10 text-primary-fixed-dim border border-primary-fixed-dim/30 rounded text-[10px] font-bold uppercase tracking-wider">Cita Programada</span>
+                                    </td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">09:22</td>
+                                    <td class="px-6 py-5 font-code-lg text-sm text-on-surface-variant">02:15 min</td>
+                                    <td class="px-6 py-5 text-right">
+                                        <button class="p-2 bg-surface-container-highest border border-outline-variant rounded-full text-on-surface-variant hover:text-primary transition-all"><span class="material-symbols-outlined text-sm leading-none">call</span></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Sidebar Stats -->
+            <aside class="flex-[3] flex flex-col gap-8">
+                <section class="bg-surface-container rounded-xl border border-outline-variant p-6 space-y-8 h-full">
+                    <div class="flex items-center gap-3 border-b border-outline-variant pb-4">
+                        <span class="material-symbols-outlined text-secondary-fixed">leaderboard</span>
+                        <h2 class="font-label-caps text-lg uppercase tracking-widest text-secondary-fixed">RENDIMIENTO HOY</h2>
+                    </div>
+                    <div class="grid grid-cols-1 gap-6">
+                        <div class="flex justify-between items-end p-6 rounded-lg bg-surface-container-low border border-outline-variant group hover:border-primary-fixed transition-colors">
+                            <div>
+                                <div class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2">ATENDIDOS HOY</div>
+                                <div class="font-code-lg text-6xl text-primary-fixed-dim">18</div>
+                            </div>
+                            <div class="flex items-center text-primary-fixed-dim gap-1 text-sm font-bold bg-primary-fixed/10 px-2 py-1 rounded">
+                                <span class="material-symbols-outlined text-sm">trending_up</span> 12%
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-end p-6 rounded-lg bg-surface-container-low border border-outline-variant group hover:border-secondary-fixed transition-colors">
+                            <div>
+                                <div class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-2">TIEMPO PROMEDIO</div>
+                                <div class="font-code-lg text-4xl text-secondary">06:12 <span class="text-xs font-label-caps text-on-surface-variant">min</span></div>
+                            </div>
+                            <div class="flex items-center text-error gap-1 text-sm font-bold bg-error-container/20 px-2 py-1 rounded">
+                                <span class="material-symbols-outlined text-sm">trending_down</span> 0:45
+                            </div>
+                        </div>
+                        
+                        <!-- Extra metric for layout balance -->
+                        <div class="p-6 rounded-lg bg-surface-container-low border border-outline-variant">
+                            <div class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant mb-4">CAPACIDAD OPERATIVA</div>
+                            <div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+                                <div class="bg-primary-fixed h-full w-[75%] shadow-[0_0_10px_rgba(121,255,91,0.5)]"></div>
+                            </div>
+                            <div class="flex justify-between mt-2 text-[10px] font-code-lg text-on-surface-variant">
+                                <span class="">OPTIMIZADO</span>
+                                <span class="">75%</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+    <script class="">
+        // Timer simulation
+        let seconds = 265; // 4:25
+        const timerEl = document.getElementById('timer');
+        
+        setInterval(() => {
+            seconds++;
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            timerEl.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')} min`;
+        }, 1000);
+
+        // Sidebar navigation active state toggle
+        document.querySelectorAll('aside nav a').forEach(link => {
+            link</script></body></html>

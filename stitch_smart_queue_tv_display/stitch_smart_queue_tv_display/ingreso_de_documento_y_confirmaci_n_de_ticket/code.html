@@ -1,0 +1,279 @@
+<!DOCTYPE html><html lang="es" class="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#e2e2e2",
+                    "surface-container-lowest": "#070d1f",
+                    "surface-container": "#191f31",
+                    "on-primary-fixed-variant": "#095300",
+                    "background": "#0c1324",
+                    "on-primary-container": "#107100",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-secondary": "#003737",
+                    "surface-variant": "#2e3447",
+                    "primary-container": "#39ff14",
+                    "surface-dim": "#0c1324",
+                    "tertiary-container": "#dddddd",
+                    "surface-container-highest": "#2e3447",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "on-error": "#690005",
+                    "on-surface-variant": "#baccb0",
+                    "tertiary": "#f9fafa",
+                    "surface-container-low": "#151b2d",
+                    "inverse-surface": "#dce1fb",
+                    "on-secondary-fixed": "#002020",
+                    "on-background": "#dce1fb",
+                    "surface": "#0c1324",
+                    "secondary-container": "#00fbfb",
+                    "on-tertiary-container": "#606162",
+                    "on-secondary-fixed-variant": "#004f4f",
+                    "error": "#ffb4ab",
+                    "on-primary-fixed": "#022100",
+                    "on-secondary-container": "#007070",
+                    "surface-tint": "#2ae500",
+                    "secondary-fixed-dim": "#00dddd",
+                    "primary-fixed": "#79ff5b",
+                    "on-error-container": "#ffdad6",
+                    "outline": "#85967c",
+                    "on-primary": "#053900",
+                    "error-container": "#93000a",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "secondary": "#ffffff",
+                    "secondary-fixed": "#00fbfb",
+                    "primary": "#efffe3",
+                    "inverse-on-surface": "#2a3043",
+                    "surface-bright": "#33394c",
+                    "outline-variant": "#3c4b35",
+                    "on-surface": "#dce1fb",
+                    "primary-fixed-dim": "#2ae500",
+                    "inverse-primary": "#106e00",
+                    "surface-container-high": "#23293c",
+                    "on-tertiary": "#2f3131"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-gap": "1.5rem",
+                    "container-padding": "4rem",
+                    "section-margin": "5rem",
+                    "gutter": "2rem"
+            },
+            "fontFamily": {
+                    "display-md": ["Inter"],
+                    "code-lg": ["JetBrains Mono"],
+                    "label-caps": ["JetBrains Mono"],
+                    "headline-sm": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "display-md": ["80px", {"lineHeight": "80px", "fontWeight": "700"}],
+                    "code-lg": ["96px", {"lineHeight": "100px", "fontWeight": "700"}],
+                    "label-caps": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "headline-sm": ["48px", {"lineHeight": "56px", "fontWeight": "600"}],
+                    "body-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                    "display-lg": ["120px", {"lineHeight": "120px", "letterSpacing": "-0.02em", "fontWeight": "800"}]
+            }
+          },
+        },
+      }
+    }catch(_e){}</script></head><body class="flex flex-col">
+
+    <!-- TopAppBar Shell -->
+    <header class="bg-surface dark:bg-surface border-b border-outline-variant dark:border-outline-variant flex justify-between items-center w-full px-container-padding h-32 shrink-0">
+        <div class="flex items-center gap-6">
+            <span class="font-display-md text-display-md font-black tracking-tighter text-primary dark:text-primary-container">ADMISIONES</span>
+            <div class="flex items-center gap-2 bg-surface-container-high px-4 py-2 rounded-full border border-outline-variant">
+                <span class="w-3 h-3 bg-primary-container rounded-full pulse-online"></span>
+                <span class="font-label-caps text-label-caps text-primary-container">EN LÍNEA</span>
+            </div>
+        </div>
+        <div class="flex items-center gap-8">
+            <div class="flex flex-col items-end">
+                <span id="current-time" class="font-headline-sm text-headline-sm text-primary">--:--</span>
+                <span class="font-label-caps text-label-caps text-on-surface-variant">LUNES, 15 MAY</span>
+            </div>
+            <div class="flex gap-4">
+                <span class="material-symbols-outlined text-primary text-4xl">wifi</span>
+                <span class="material-symbols-outlined text-primary text-4xl">schedule</span>
+                <span class="material-symbols-outlined text-primary text-4xl">calendar_today</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Canvas -->
+    <main class="flex-grow flex items-center justify-center px-container-padding overflow-hidden relative">
+        
+        <!-- Document Input Section -->
+        <div class="w-full max-w-4xl flex flex-col items-center gap-10">
+            
+            <div class="w-full text-center space-y-4">
+                <label for="doc-input" class="font-label-caps text-label-caps text-on-surface-variant tracking-widest uppercase">Ingrese su Número de Documento o Cédula</label>
+                <div class="relative w-full">
+                    <input type="text" id="doc-input" readonly="" class="w-full bg-surface-container-lowest border-2 border-primary-container text-primary font-code-lg text-code-lg text-center py-8 rounded-xl focus:ring-4 focus:ring-primary-container/20 transition-all cursor-default outline-none shadow-[0_0_20px_rgba(57,255,20,0.1)]" placeholder="••••••••••">
+                </div>
+            </div>
+
+            <!-- Numpad Grid -->
+            <div class="numpad-grid w-full max-w-2xl">
+                <button onclick="appendNum('1')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">1</button>
+                <button onclick="appendNum('2')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">2</button>
+                <button onclick="appendNum('3')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">3</button>
+                
+                <button onclick="appendNum('4')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">4</button>
+                <button onclick="appendNum('5')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">5</button>
+                <button onclick="appendNum('6')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">6</button>
+                
+                <button onclick="appendNum('7')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">7</button>
+                <button onclick="appendNum('8')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">8</button>
+                <button onclick="appendNum('9')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">9</button>
+                
+                <button onclick="clearInput()" class="h-24 rounded-xl bg-error-container font-label-caps text-label-caps text-error border border-error/30 hover:bg-error transition-all hover:text-on-error active:scale-95 flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">backspace</span>
+                    BORRAR
+                </button>
+                <button onclick="appendNum('0')" class="h-24 rounded-xl bg-surface-container-high font-headline-sm text-headline-sm text-on-surface hover:bg-surface-container-highest transition-all neon-glow-active active:scale-95">0</button>
+                <button onclick="showTicket()" class="h-24 rounded-xl bg-primary-container font-label-caps text-label-caps text-on-primary-fixed border-none shadow-[0_0_25px_rgba(57,255,20,0.5)] hover:brightness-110 transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    CONFIRMAR
+                </button>
+            </div>
+
+            <!-- Secondary Action -->
+            <button class="flex items-center gap-4 bg-surface-container-low border border-outline-variant px-10 py-5 rounded-full hover:bg-surface-container-high transition-all text-secondary active:scale-95">
+                <span class="material-symbols-outlined text-4xl">qr_code_scanner</span>
+                <span class="font-body-lg text-body-lg">Escanear QR de Cita</span>
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer Shell -->
+    <footer class="fixed bottom-0 w-full z-10 flex flex-col items-center justify-center h-[120px] px-container-padding bg-surface-container-lowest dark:bg-surface-container-lowest border-t-2 border-primary-container dark:border-primary-container">
+        <div class="flex gap-12 mb-2">
+            <a href="#" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors">Soporte</a>
+            <a href="#" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors">Términos</a>
+            <a href="#" class="font-label-caps text-label-caps text-on-surface-variant hover:text-primary-fixed transition-colors">Privacidad</a>
+        </div>
+        <p class="font-body-lg text-[14px] leading-tight text-on-surface opacity-60">© 2024 Kinetic Neon Enterprise. Todos los derechos reservados. Sistema de Gestión de Turnos v2.4. Avisos Legales y Privacidad.</p>
+    </footer>
+
+    <!-- Overlay de Confirmación (Ticket) -->
+    <div id="ticket-overlay" class="fixed inset-0 z-[100] ticket-modal items-center justify-center p-10 flex">
+        <div class="bg-white text-slate-950 w-full max-w-xl rounded-sm shadow-2xl relative overflow-hidden flex flex-col">
+            <!-- Ticket Top Decor -->
+            <div class="h-4 w-full bg-slate-950 flex items-center justify-around gap-1 p-1">
+                <div class="h-2 w-2 rounded-full bg-white opacity-20"></div>
+                <div class="h-2 w-2 rounded-full bg-white opacity-20"></div>
+                <div class="h-2 w-2 rounded-full bg-white opacity-20"></div>
+                <div class="h-2 w-2 rounded-full bg-white opacity-20"></div>
+                <div class="h-2 w-2 rounded-full bg-white opacity-20"></div>
+                <div class="h-2 w-2 rounded-full bg-white opacity-20"></div>
+                <div class="h-2 w-2 rounded-full bg-white opacity-20"></div>
+                <div class="h-2 w-2 rounded-full bg-white opacity-20"></div>
+            </div>
+
+            <div class="p-12 space-y-8">
+                <div class="text-center">
+                    <span class="font-label-caps text-[20px] text-slate-500 uppercase tracking-[0.2em]">Ticket de Admisión</span>
+                    <h2 class="font-display-lg text-display-lg text-slate-950 mt-4 leading-none tracking-tighter">CAR-014</h2>
+                </div>
+
+                <div class="border-y-2 border-dashed border-slate-200 py-8 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="font-label-caps text-[18px] text-slate-400">SERVICIO</span>
+                        <span class="font-headline-sm text-[28px] font-bold text-slate-900">Atención al Cliente</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-label-caps text-[18px] text-slate-400">ESTACIÓN</span>
+                        <span class="font-headline-sm text-[28px] font-bold text-slate-900">Módulo 5</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-6">
+                    <div class="bg-[#39ff14] text-black px-6 py-2 rounded-full font-label-caps text-[20px] font-bold">
+                        Cita Confirmada a Tiempo
+                    </div>
+                    <p class="text-center font-body-lg text-[24px] leading-relaxed text-slate-600 max-w-sm">
+                        Por favor tome su ticket impreso y diríjase a la Sala de Espera General.
+                    </p>
+                </div>
+
+                <div class="flex justify-center pt-8">
+                    <div class="w-full h-32 bg-slate-100 flex items-center justify-center rounded border border-slate-200">
+                        <!-- Simulated Barcode -->
+                        <div class="flex gap-1 h-20 items-end">
+                            <div class="w-1 bg-slate-950 h-full"></div><div class="w-2 bg-slate-950 h-16"></div><div class="w-1 bg-slate-950 h-full"></div><div class="w-3 bg-slate-950 h-12"></div><div class="w-1 bg-slate-950 h-full"></div><div class="w-1 bg-slate-950 h-16"></div><div class="w-4 bg-slate-950 h-full"></div><div class="w-1 bg-slate-950 h-12"></div><div class="w-2 bg-slate-950 h-full"></div><div class="w-1 bg-slate-950 h-16"></div><div class="w-1 bg-slate-950 h-full"></div><div class="w-3 bg-slate-950 h-14"></div><div class="w-1 bg-slate-950 h-full"></div><div class="w-2 bg-slate-950 h-12"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button for Demo -->
+            <button onclick="hideTicket()" class="absolute top-4 right-4 text-slate-300 hover:text-slate-950 transition-colors">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+
+            <!-- Ticket Bottom Zig-Zag simulation -->
+            <div class="flex w-full overflow-hidden">
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+                <div class="flex-none w-8 h-8 bg-white rotate-45 -translate-y-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <script class="">
+        const input = document.getElementById('doc-input');
+        const overlay = document.getElementById('ticket-overlay');
+
+        function appendNum(num) {
+            if (input.value.length < 10) {
+                input.value += num;
+            }
+        }
+
+        function clearInput() {
+            input.value = input.value.slice(0, -1);
+        }
+
+        function showTicket() {
+            if (input.value.length > 5) {
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+            } else {
+                input.classList.add('border-error');
+                setTimeout(() => input.classList.remove('border-error'), 500);
+            }
+        }
+
+        function hideTicket() {
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+            input.value = '';
+        }
+
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.getHours().toString().padStart(2</script></body></html>

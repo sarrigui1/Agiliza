@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ADMISIONES - Gestión de Turnos</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700;800&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary": "#efffe3",
+                    "on-secondary-container": "#007070",
+                    "on-tertiary-container": "#606162",
+                    "surface-container-low": "#151b2d",
+                    "surface-container-highest": "#2e3447",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "on-secondary-fixed-variant": "#004f4f",
+                    "on-tertiary": "#2f3131",
+                    "on-primary-fixed-variant": "#095300",
+                    "primary-fixed-dim": "#2ae500",
+                    "on-secondary": "#003737",
+                    "inverse-surface": "#dce1fb",
+                    "surface-bright": "#33394c",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "background": "#0c1324",
+                    "inverse-primary": "#106e00",
+                    "secondary": "#ffffff",
+                    "secondary-container": "#00fbfb",
+                    "surface-container": "#191f31",
+                    "on-error": "#690005",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "secondary-fixed": "#00fbfb",
+                    "on-primary-container": "#107100",
+                    "tertiary-fixed": "#e2e2e2",
+                    "tertiary-container": "#dddddd",
+                    "outline": "#85967c",
+                    "primary-fixed": "#79ff5b",
+                    "on-error-container": "#ffdad6",
+                    "surface-container-lowest": "#070d1f",
+                    "surface": "#0c1324",
+                    "on-surface": "#dce1fb",
+                    "on-primary": "#053900",
+                    "on-background": "#dce1fb",
+                    "surface-tint": "#2ae500",
+                    "surface-container-high": "#23293c",
+                    "tertiary": "#f9fafa",
+                    "outline-variant": "#3c4b35",
+                    "on-primary-fixed": "#022100",
+                    "on-surface-variant": "#baccb0",
+                    "primary-container": "#39ff14",
+                    "secondary-fixed-dim": "#00dddd",
+                    "surface-variant": "#2e3447",
+                    "surface-dim": "#0c1324",
+                    "error-container": "#93000a",
+                    "on-secondary-fixed": "#002020",
+                    "inverse-on-surface": "#2a3043",
+                    "error": "#ffb4ab"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "2rem",
+                    "container-padding": "4rem",
+                    "stack-gap": "1.5rem",
+                    "section-margin": "5rem"
+            },
+            "fontFamily": {
+                    "label-caps": ["JetBrains Mono"],
+                    "display-lg": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-sm": ["Inter"],
+                    "code-lg": ["JetBrains Mono"],
+                    "display-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-caps": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                    "display-lg": ["120px", {"lineHeight": "120px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}],
+                    "headline-sm": ["48px", {"lineHeight": "56px", "fontWeight": "600"}],
+                    "code-lg": ["96px", {"lineHeight": "100px", "fontWeight": "700"}],
+                    "display-md": ["80px", {"lineHeight": "80px", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .neon-glow {
+            box-shadow: 0 0 20px rgba(42, 229, 0, 0.2);
+        }
+        .neon-border {
+            border: 1px solid rgba(42, 229, 0, 0.5);
+        }
+        .pulse-online {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(42, 229, 0, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(42, 229, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(42, 229, 0, 0); }
+        }
+        .keyboard-btn:active {
+            transform: scale(0.95);
+            background-color: var(--surface-container-highest);
+        }
+        .ticket-modal {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0c1324; }
+        ::-webkit-scrollbar-thumb { background: #191f31; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body-lg overflow-hidden h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-surface border-b border-outline-variant flex justify-between items-center w-full px-gutter h-24 z-50">
+<div class="flex items-center gap-4">
+<span class="font-label-caps text-label-caps font-bold text-primary tracking-tighter">ADMISIONES</span>
+<div class="flex items-center gap-2 bg-surface-container-low px-4 py-1 rounded-full border border-outline-variant">
+<span class="w-2.5 h-2.5 bg-primary-fixed-dim rounded-full pulse-online"></span>
+<span class="text-sm font-medium text-primary uppercase tracking-widest">En Línea</span>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="text-right">
+<div class="text-primary font-bold text-2xl font-label-caps" id="current-time">14:32:05</div>
+<div class="text-on-surface-variant text-xs uppercase tracking-widest" id="current-date">Lunes, 24 de Mayo 2024</div>
+</div>
+<div class="flex gap-4">
+<button class="p-3 rounded-xl hover:bg-surface-container-highest transition-all duration-300 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="sync">sync</span>
+</button>
+<button class="p-3 rounded-xl hover:bg-surface-container-highest transition-all duration-300 text-on-surface-variant">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-grow relative flex items-center justify-center p-gutter">
+
+<!-- Initial Mode Selector -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-gap w-full max-w-6xl z-10 transition-all duration-500" id="mode-selector">
+<button class="group relative bg-surface-container h-[450px] rounded-2xl border border-outline-variant hover:border-primary-fixed-dim transition-all duration-500 overflow-hidden text-left flex flex-col justify-end p-12" onclick="showFlow('appointment')">
+<div class="absolute top-12 left-12 p-6 rounded-full bg-primary-container/10 group-hover:bg-primary-container text-primary-fixed-dim group-hover:text-on-primary-container transition-all duration-500">
+<span class="material-symbols-outlined !text-6xl" data-icon="calendar_today">calendar_today</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-2">Tengo Cita Programada</h2>
+<p class="text-on-surface-variant text-body-lg">Validación rápida para pacientes con reserva previa.</p>
+</div>
+</button>
+<button class="group relative bg-surface-container h-[450px] rounded-2xl border border-outline-variant hover:border-secondary-fixed transition-all duration-500 overflow-hidden text-left flex flex-col justify-end p-12" onclick="showFlow('walkin')">
+<div class="absolute top-12 left-12 p-6 rounded-full bg-secondary-container/10 group-hover:bg-secondary-container text-secondary-fixed group-hover:text-on-secondary-container transition-all duration-500">
+<span class="material-symbols-outlined !text-6xl" data-icon="person_add">person_add</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-secondary mb-2">Turno Espontáneo</h2>
+<p class="text-on-surface-variant text-body-lg">Atención sin cita para servicios generales y consultas.</p>
+</div>
+</button>
+</div>
+<!-- Appointment Flow (Hidden by default) -->
+<div class="hidden w-full max-w-4xl z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-start" id="appointment-flow">
+<div class="space-y-8">
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors" onclick="backToMain()">
+<span class="material-symbols-outlined">arrow_back</span>
+<span class="font-medium">Volver al inicio</span>
+</button>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary mb-4">Ingrese su Cédula</h2>
+<p class="text-on-surface-variant">Use el teclado numérico para digitar su número de identidad o código de reserva.</p>
+</div>
+<div class="relative">
+<input class="w-full bg-surface-container-high border-2 border-outline-variant rounded-2xl p-8 font-code-lg text-code-lg text-primary text-center focus:outline-none focus:border-primary-fixed-dim transition-all" id="id-input" placeholder="000-000-000" readonly="" type="text"/>
+<div class="hidden absolute -bottom-10 left-0 right-0 text-center text-error font-medium flex items-center justify-center gap-2" id="error-msg">
+<span class="material-symbols-outlined text-sm">warning</span>
+<span>Cita fuera de horario / Consulte en recepción</span>
+</div>
+</div>
+<button class="w-full bg-primary-fixed-dim hover:bg-primary-container text-on-primary-container font-bold py-8 rounded-2xl text-2xl transition-all shadow-lg flex items-center justify-center gap-4" onclick="confirmAppointment()">
+<span>CONFIRMAR LLEGADA</span>
+<span class="material-symbols-outlined">check_circle</span>
+</button>
+</div>
+<div class="bg-surface-container-low p-8 rounded-3xl border border-outline-variant">
+<div class="grid grid-cols-3 gap-4" id="numpad">
+<!-- Numpad injected by JS -->
+</div>
+</div>
+</div>
+<!-- Walk-in Flow (Hidden by default) -->
+<div class="hidden w-full max-w-2xl z-10 bg-surface-container p-12 rounded-3xl border border-outline-variant space-y-10" id="walkin-flow">
+<div class="flex justify-between items-center">
+<h2 class="font-headline-sm text-headline-sm text-secondary">Nuevo Turno</h2>
+<button class="p-2 text-on-surface-variant" onclick="backToMain()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="space-y-6">
+<div class="space-y-2">
+<label class="text-sm font-label-caps text-on-surface-variant">Nombre Completo</label>
+<input class="w-full bg-surface-container-high border-outline-variant rounded-xl p-6 text-xl focus:border-secondary-fixed focus:ring-0 text-on-surface" placeholder="Ej. Juan Pérez" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-sm font-label-caps text-on-surface-variant">Tipo Documento</label>
+<select class="w-full bg-surface-container-high border-outline-variant rounded-xl p-6 text-xl focus:border-secondary-fixed text-on-surface appearance-none">
+<option>Cédula de Ciudadanía</option>
+<option>Pasaporte</option>
+<option>Cédula Extranjería</option>
+</select>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-label-caps text-on-surface-variant">Identificación</label>
+<input class="w-full bg-surface-container-high border-outline-variant rounded-xl p-6 text-xl focus:border-secondary-fixed text-on-surface" placeholder="Documento" type="number"/>
+</div>
+</div>
+<div class="space-y-2">
+<label class="text-sm font-label-caps text-on-surface-variant">Servicio Requerido</label>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+<button class="p-6 border-2 border-outline-variant rounded-xl text-center hover:border-secondary-fixed hover:bg-surface-container-high transition-all active-service" onclick="selectService(this)">
+                            Atención General
+                        </button>
+<button class="p-6 border-2 border-outline-variant rounded-xl text-center hover:border-secondary-fixed hover:bg-surface-container-high transition-all" onclick="selectService(this)">
+                            Caja
+                        </button>
+<button class="p-6 border-2 border-outline-variant rounded-xl text-center hover:border-secondary-fixed hover:bg-surface-container-high transition-all" onclick="selectService(this)">
+                            Asesoría
+                        </button>
+</div>
+</div>
+<label class="flex items-center gap-6 p-6 border-2 border-primary-container/20 bg-primary-container/5 rounded-2xl cursor-pointer hover:bg-primary-container/10 transition-all">
+<input class="w-8 h-8 rounded border-outline-variant text-primary-fixed-dim focus:ring-primary-fixed-dim" type="checkbox"/>
+<div>
+<div class="font-bold text-primary">Atención Preferencial</div>
+<div class="text-sm text-on-surface-variant">Personas mayores, embarazadas o con movilidad reducida.</div>
+</div>
+</label>
+</div>
+<button class="w-full bg-secondary-fixed hover:bg-secondary-container text-on-secondary-container font-bold py-8 rounded-2xl text-2xl transition-all shadow-lg" onclick="confirmAppointment()">
+                GENERAR TURNO
+            </button>
+</div>
+<!-- Ticket Modal Overlay -->
+<div class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-md px-4" id="ticket-overlay">
+<div class="ticket-modal w-full max-w-md rounded-[2rem] shadow-2xl p-1 overflow-hidden relative">
+<div class="bg-white p-12 text-center space-y-8 text-background relative overflow-hidden">
+<!-- Ticket header decoration -->
+<div class="absolute top-0 left-0 right-0 h-2 bg-primary-fixed-dim"></div>
+<div>
+<div class="text-on-tertiary-container font-label-caps text-sm tracking-widest mb-2">TICKET DE TURNO</div>
+<h1 class="font-code-lg text-[120px] leading-none font-extrabold text-background tracking-tighter">CAR-014</h1>
+<div class="text-2xl font-bold text-on-primary-container mt-4">Atención al Cliente</div>
+</div>
+<div class="border-y-2 border-dashed border-gray-300 py-6">
+<div class="text-gray-500 font-medium">Lunes 24 Mayo • 14:35</div>
+<div class="text-sm text-gray-400 mt-1">Sede Central - Módulo 04</div>
+</div>
+<div class="space-y-4">
+<p class="font-medium text-lg text-gray-700 px-8">Por favor, tome su ticket y diríjase a la Sala de Espera</p>
+<div class="flex justify-center">
+<span class="material-symbols-outlined !text-6xl text-primary-fixed-dim" style="font-variation-settings: 'FILL' 1">print</span>
+</div>
+</div>
+<button class="w-full bg-background text-white py-6 rounded-xl font-bold uppercase tracking-widest mt-8" onclick="closeModal()">Cerrar</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Marquee Ticker -->
+<footer class="fixed bottom-0 left-0 w-full h-[120px] bg-surface-container-lowest border-t-2 border-primary-fixed-dim flex items-center overflow-hidden z-40 px-container-padding shadow-[0px_-4px_20px_rgba(42,229,0,0.1)]">
+<div class="flex-shrink-0 bg-primary-fixed-dim text-on-primary-container font-bold px-6 py-2 rounded-lg text-sm mr-8">AVISO</div>
+<div class="whitespace-nowrap overflow-hidden group">
+<div class="inline-block animate-marquee group-hover:pause flex gap-20">
+<span class="font-label-caps text-on-surface tracking-widest">SISTEMA DE GESTIÓN DE TURNOS - V.2.4.0</span>
+<span class="font-label-caps text-on-surface-variant">RECUERDE TENER SU DOCUMENTO A LA MANO</span>
+<span class="font-label-caps text-on-surface">EL HORARIO DE ATENCIÓN ES HASTA LAS 18:00</span>
+<span class="font-label-caps text-on-surface-variant">ESTIMADOS USUARIOS, LA ATENCIÓN PREFERENCIAL TIENE PRIORIDAD</span>
+</div>
+</div>
+</footer>
+<style>
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+        }
+    </style>
+<script>
+        // Update Time & Date
+        function updateDateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('es-ES', { hour12: false });
+            const dateStr = now.toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            
+            document.getElementById('current-time').textContent = timeStr;
+            document.getElementById('current-date').textContent = dateStr;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Numpad Generation
+        const numpad = document.getElementById('numpad');
+        const buttons = [
+            '1', '2', '3',
+            '4', '5', '6',
+            '7', '8', '9',
+            'CLEAR', '0', 'DELETE'
+        ];
+
+        buttons.forEach(btn => {
+            const button = document.createElement('button');
+            button.className = `keyboard-btn h-24 flex items-center justify-center rounded-2xl font-bold text-2xl transition-all duration-200 border border-outline-variant ${
+                btn === 'CLEAR' ? 'text-error bg-error/10 hover:bg-error/20 text-sm' : 
+                btn === 'DELETE' ? 'text-on-surface-variant bg-surface-container-highest hover:bg-surface-container' : 
+                'text-primary bg-surface-container hover:bg-surface-container-highest'
+            }`;
+            
+            if (btn === 'DELETE') {
+                button.innerHTML = '<span class="material-symbols-outlined">backspace</span>';
+            } else {
+                button.textContent = btn;
+            }
+
+            button.onclick = () => handleInput(btn);
+            numpad.appendChild(button);
+        });
+
+        const idInput = document.getElementById('id-input');
+        function handleInput(val) {
+            document.getElementById('error-msg').classList.add('hidden');
+            if (val === 'CLEAR') {
+                idInput.value = '';
+            } else if (val === 'DELETE') {
+                idInput.value = idInput.value.slice(0, -1);
+            } else {
+                if (idInput.value.length < 12) idInput.value += val;
+            }
+        }
+
+        // Flow Management
+        function showFlow(type) {
+            document.getElementById('mode-selector').classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'hidden');
+            
+            if (type === 'appointment') {
+                document.getElementById('appointment-flow').classList.remove('hidden');
+            } else {
+                document.getElementById('walkin-flow').classList.remove('hidden');
+            }
+        }
+
+        function backToMain() {
+            document.getElementById('appointment-flow').classList.add('hidden');
+            document.getElementById('walkin-flow').classList.add('hidden');
+            document.getElementById('mode-selector').classList.remove('hidden', 'opacity-0', 'scale-95', 'pointer-events-none');
+        }
+
+        function selectService(btn) {
+            const btns = btn.parentNode.querySelectorAll('button');
+            btns.forEach(b => b.classList.remove('border-secondary-fixed', 'bg-secondary-container/10', 'text-secondary-fixed'));
+            btn.classList.add('border-secondary-fixed', 'bg-secondary-container/10', 'text-secondary-fixed');
+        }
+
+        // Interaction Mockups
+        function confirmAppointment() {
+            const inputVal = idInput.value;
+            // Simulated validation: if length is odd, show error. Just for demo.
+            if (inputVal.length > 0 && inputVal.length % 2 !== 0) {
+                document.getElementById('error-msg').classList.remove('hidden');
+            } else {
+                document.getElementById('ticket-overlay').classList.remove('hidden');
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('ticket-overlay').classList.add('hidden');
+            backToMain();
+            idInput.value = '';
+        }
+    </script>
+</body></html>

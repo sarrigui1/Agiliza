@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Acceso al Sistema | Kinetic Neon Enterprise</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        .neon-glow-primary {
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.4), 0 0 30px rgba(57, 255, 20, 0.2);
+        }
+        
+        .neon-border-glow {
+            box-shadow: inset 0 0 8px rgba(57, 255, 20, 0.1);
+        }
+
+        .glass-panel {
+            background: rgba(25, 31, 49, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .animate-pulse-subtle {
+            animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#dddddd",
+                        "primary": "#efffe3",
+                        "surface-container": "#191f31",
+                        "surface-container-lowest": "#070d1f",
+                        "on-background": "#dce1fb",
+                        "secondary-container": "#00fbfb",
+                        "on-primary": "#053900",
+                        "primary-container": "#39ff14",
+                        "outline-variant": "#3c4b35",
+                        "on-surface-variant": "#baccb0",
+                        "on-error-container": "#ffdad6",
+                        "tertiary": "#f9fafa",
+                        "surface-container-highest": "#2e3447",
+                        "on-tertiary": "#2f3131",
+                        "secondary-fixed-dim": "#00dddd",
+                        "secondary-fixed": "#00fbfb",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-secondary-fixed-variant": "#004f4f",
+                        "background": "#0c1324",
+                        "on-tertiary-container": "#606162",
+                        "inverse-surface": "#dce1fb",
+                        "error": "#ffb4ab",
+                        "surface-variant": "#2e3447",
+                        "primary-fixed": "#79ff5b",
+                        "surface-dim": "#0c1324",
+                        "on-surface": "#dce1fb",
+                        "on-secondary-fixed": "#002020",
+                        "on-secondary-container": "#007070",
+                        "surface": "#0c1324",
+                        "on-primary-container": "#107100",
+                        "on-error": "#690005",
+                        "secondary": "#ffffff",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "tertiary-fixed": "#e2e2e2",
+                        "surface-container-high": "#23293c",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "error-container": "#93000a",
+                        "surface-bright": "#33394c",
+                        "on-primary-fixed-variant": "#095300",
+                        "outline": "#85967c",
+                        "on-secondary": "#003737",
+                        "surface-container-low": "#151b2d",
+                        "primary-fixed-dim": "#2ae500",
+                        "on-primary-fixed": "#022100",
+                        "inverse-primary": "#106e00",
+                        "inverse-on-surface": "#2a3043",
+                        "surface-tint": "#2ae500"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-gap": "1.5rem",
+                        "gutter": "2rem",
+                        "container-padding": "4rem",
+                        "section-margin": "5rem"
+                    },
+                    "fontFamily": {
+                        "code-lg": ["JetBrains Mono"],
+                        "headline-sm": ["Inter"],
+                        "label-caps": ["JetBrains Mono"],
+                        "display-md": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "code-lg": ["96px", {"lineHeight": "100px", "fontWeight": "700"}],
+                        "headline-sm": ["48px", {"lineHeight": "56px", "fontWeight": "600"}],
+                        "label-caps": ["24px", {"lineHeight": "32px", "fontWeight": "500"}],
+                        "display-md": ["80px", {"lineHeight": "80px", "fontWeight": "700"}],
+                        "display-lg": ["120px", {"lineHeight": "120px", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                        "body-lg": ["32px", {"lineHeight": "40px", "fontWeight": "400"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface-dim text-on-surface font-body-lg min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container overflow-hidden">
+<!-- Atmospheric Background Shader -->
+<div class="fixed inset-0 z-0">
+
+</div>
+<!-- Main Content Canvas -->
+<main class="relative z-10 flex-grow flex items-center justify-center p-gutter">
+<!-- Login Card Container -->
+<div class="glass-panel border border-outline-variant/30 rounded-xl w-full max-w-[540px] p-12 neon-border-glow animate-in fade-in zoom-in duration-700">
+<!-- Identity Header -->
+<div class="text-center mb-12">
+<h1 class="font-label-caps text-label-caps text-primary-container tracking-[0.2em] mb-8 animate-pulse-subtle">
+                    KINETIC_NEON_OPS
+                </h1>
+<h2 class="font-headline-sm text-headline-sm text-on-background mb-2">
+                    Acceso al Sistema
+                </h2>
+<p class="font-body-lg text-on-surface-variant text-lg">
+                    Ingrese sus credenciales para continuar
+                </p>
+</div>
+<!-- LoginForm -->
+<form class="space-y-8" id="loginForm" onsubmit="return false">
+<!-- Email Field -->
+<div class="space-y-3">
+<label class="block font-label-caps text-sm text-outline tracking-wider uppercase pl-1" for="email">
+                        Usuario / Email
+                    </label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="alternate_email">alternate_email</span>
+</div>
+<input class="block w-full pl-12 pr-4 py-4 bg-surface-container-low border border-outline-variant/50 rounded-lg text-on-surface focus:ring-2 focus:ring-primary-container/30 focus:border-primary-container transition-all outline-none" id="email" placeholder="nombre@empresa.com" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-3">
+<div class="flex justify-between items-end px-1">
+<label class="block font-label-caps text-sm text-outline tracking-wider uppercase" for="password">
+                            Contraseña
+                        </label>
+<a class="text-sm text-primary-container hover:text-primary transition-colors hover:underline underline-offset-4" href="#">
+                            ¿Olvidó su contraseña?
+                        </a>
+</div>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-outline group-focus-within:text-primary-container transition-colors">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+</div>
+<input class="block w-full pl-12 pr-12 py-4 bg-surface-container-low border border-outline-variant/50 rounded-lg text-on-surface focus:ring-2 focus:ring-primary-container/30 focus:border-primary-container transition-all outline-none" id="password" placeholder="••••••••" required="" type="password"/>
+<button class="absolute inset-y-0 right-0 pr-4 flex items-center text-outline hover:text-on-surface transition-colors" onclick="togglePassword()" type="button">
+<span class="material-symbols-outlined" data-icon="visibility" id="passToggleIcon">visibility</span>
+</button>
+</div>
+</div>
+<!-- Remember Me & Secondary Actions -->
+<div class="flex items-center">
+<label class="flex items-center cursor-pointer group">
+<input class="w-5 h-5 rounded border-outline-variant bg-surface-container-low text-primary-container focus:ring-primary-container/50 focus:ring-offset-surface-dim transition-all" type="checkbox"/>
+<span class="ml-3 text-on-surface-variant font-medium select-none group-hover:text-on-surface transition-colors">Recordar sesión</span>
+</label>
+</div>
+<!-- Primary Action -->
+<button class="w-full py-5 bg-primary-container text-on-primary-container font-label-caps text-lg rounded-lg neon-glow-primary hover:scale-[1.01] active:scale-[0.98] transition-all duration-200 uppercase tracking-widest flex items-center justify-center gap-3" type="submit">
+<span class="material-symbols-outlined font-bold" data-icon="login">login</span>
+                    INICIAR SESIÓN
+                </button>
+</form>
+<!-- Footer Note -->
+<div class="mt-12 pt-8 border-t border-outline-variant/30 flex flex-col items-center gap-4">
+<div class="flex items-center gap-4 text-outline/50">
+<span class="material-symbols-outlined text-sm" data-icon="security" style="font-variation-settings: 'FILL' 1;">security</span>
+<span class="font-label-caps text-[12px] uppercase tracking-tighter">Acceso de Alta Seguridad Certificado</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Visual Accents (Static) -->
+<div class="fixed bottom-0 left-0 p-gutter z-20 pointer-events-none opacity-20">
+<div class="font-label-caps text-[10px] text-primary-container rotate-90 origin-bottom-left tracking-[1em] uppercase">
+            System_Status: Operational_Node_01
+        </div>
+</div>
+<!-- Scripts for UI Interactions -->
+<script>
+        function togglePassword() {
+            const passInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('passToggleIcon');
+            
+            if (passInput.type === 'password') {
+                passInput.type = 'text';
+                toggleIcon.textContent = 'visibility_off';
+            } else {
+                passInput.type = 'password';
+                toggleIcon.textContent = 'visibility';
+            }
+        }
+
+        // Add subtle mouse-tracking glow effect to the card
+        const card = document.querySelector('.glass-panel');
+        document.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    </script>
+<style>
+        .glass-panel::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(57, 255, 20, 0.05), transparent 80%);
+            z-index: -1;
+            pointer-events: none;
+            border-radius: inherit;
+        }
+    </style>
+</body></html>
