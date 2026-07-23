@@ -18,6 +18,10 @@ const PUBLIC_PREFIXES = ['/login', '/display', '/checkin', '/api/cron'];
 
 /** Prefijo de ruta protegida -> roles permitidos (cubre /admin/settings y /admin/supervisor) */
 const PROTECTED_ROUTES: { prefix: string; roles: RolUsuario[] }[] = [
+  // Más específica primero: `.find()` se queda con la primera coincidencia, así que
+  // /admin/usuarios (gestión de credenciales/roles) queda restringido a admin aunque
+  // el resto de /admin ya permita también a supervisor.
+  { prefix: '/admin/usuarios', roles: ['admin'] },
   { prefix: '/admin', roles: ['admin', 'supervisor'] },
   { prefix: '/workspace', roles: ['agente', 'admin', 'supervisor'] },
 ];

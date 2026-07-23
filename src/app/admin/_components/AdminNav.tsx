@@ -2,28 +2,31 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings, Radar, Building2, LayoutDashboard, FileBarChart, CalendarClock } from 'lucide-react';
+import { Settings, Radar, Building2, LayoutDashboard, FileBarChart, CalendarClock, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SignOutButton } from '@/components/shared/SignOutButton';
+import type { RolUsuario } from '@/types/database';
 
 const LINKS = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/settings', label: 'Configuración', icon: Settings },
-  { href: '/admin/supervisor', label: 'Supervisión', icon: Radar },
-  { href: '/admin/infraestructura', label: 'Infraestructura', icon: Building2 },
-  { href: '/admin/citas', label: 'Citas', icon: CalendarClock },
-  { href: '/admin/reportes', label: 'Reportes', icon: FileBarChart },
+  { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard, soloAdmin: false },
+  { href: '/admin/settings', label: 'Configuración', icon: Settings, soloAdmin: false },
+  { href: '/admin/supervisor', label: 'Supervisión', icon: Radar, soloAdmin: false },
+  { href: '/admin/infraestructura', label: 'Infraestructura', icon: Building2, soloAdmin: false },
+  { href: '/admin/citas', label: 'Citas', icon: CalendarClock, soloAdmin: false },
+  { href: '/admin/reportes', label: 'Reportes', icon: FileBarChart, soloAdmin: false },
+  { href: '/admin/usuarios', label: 'Usuarios', icon: Users, soloAdmin: true },
 ];
 
-export function AdminNav() {
+export function AdminNav({ rol }: { rol: RolUsuario | null }) {
   const pathname = usePathname();
+  const links = LINKS.filter((link) => !link.soloAdmin || rol === 'admin');
 
   return (
     <nav className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
       <div className="flex items-center gap-6">
         <span className="font-mono text-xs font-bold tracking-widest text-primary">FLOWQ_ADMIN</span>
         <div className="flex gap-1">
-          {LINKS.map(({ href, label, icon: Icon }) => {
+          {links.map(({ href, label, icon: Icon }) => {
             const activo = pathname.startsWith(href);
             return (
               <Link
