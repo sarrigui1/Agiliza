@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { AlertTriangle, Zap, BarChart3 } from 'lucide-react';
 import { Card, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { SignOutButton } from '@/components/shared/SignOutButton';
 import { TerminalCard } from './TerminalCard';
 import type { EstadoPuntoAtencion } from '@/types/database';
 
@@ -49,7 +48,7 @@ export function SupervisorDashboard({
   const maxTpe = Math.max(1, ...tpePorArea.map((a) => a.minutos));
 
   return (
-    <main className="min-h-dvh bg-bg p-8">
+    <main className="p-8">
       <header className="mb-8 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div>
@@ -63,13 +62,10 @@ export function SupervisorDashboard({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-4">
-          <Button onClick={() => avisarPendiente('La reasignación masiva estará disponible en la próxima fase.')}>
-            <Zap className="size-4" />
-            Reasignación Masiva
-          </Button>
-          <SignOutButton className="border-l border-border pl-4" />
-        </div>
+        <Button onClick={() => avisarPendiente('La reasignación masiva estará disponible en la próxima fase.')}>
+          <Zap className="size-4" />
+          Reasignación Masiva
+        </Button>
       </header>
 
       {aviso && (

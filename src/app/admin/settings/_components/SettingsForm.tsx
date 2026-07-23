@@ -5,7 +5,6 @@ import { Save, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { actualizarConfiguracionGlobal } from '@/actions/settings';
 import type { ConfiguracionGlobal } from '@/types/database';
-import { SignOutButton } from '@/components/shared/SignOutButton';
 import { AlgorithmCard } from './AlgorithmCard';
 import { TolerancesCard } from './TolerancesCard';
 import { AbsenceCard } from './AbsenceCard';
@@ -41,7 +40,7 @@ export function SettingsForm({ configuracionInicial }: { configuracionInicial: C
   }
 
   return (
-    <main className="min-h-dvh bg-bg p-8">
+    <main className="p-8">
       <header className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-extrabold tracking-tight text-primary">CONFIGURACIÓN DEL SISTEMA</h1>
         <div className="flex items-center gap-4">
@@ -56,7 +55,6 @@ export function SettingsForm({ configuracionInicial }: { configuracionInicial: C
             <Save className="size-4" />
             Guardar Cambios
           </Button>
-          <SignOutButton className="border-l border-border pl-4" />
         </div>
       </header>
 
