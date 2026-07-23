@@ -1,6 +1,6 @@
 # FlowQ (Agiliza) — Documento Técnico de Arquitectura
 
-Sistema de Llamado y Gestión de Turnos en tiempo real. Este documento describe el stack, la arquitectura, el modelo de datos, la seguridad, la instalación y las recomendaciones operativas para mantener el sistema funcionando correctamente en producción.
+Sistema de Llamado y Gestión de Turnos en tiempo real. Este documento describe el stack, la arquitectura, el modelo de datos, la seguridad y las recomendaciones operativas. Para instalar el sistema paso a paso, ver [`MANUAL_INSTALACION_IMPLEMENTACION.md`](./MANUAL_INSTALACION_IMPLEMENTACION.md); para el uso diario por rol, ver [`MANUAL_USUARIOS.md`](./MANUAL_USUARIOS.md).
 
 ---
 
@@ -65,7 +65,7 @@ FlowQ gestiona el flujo completo de atención al público: desde el check-in de 
 | `zonas` | Ubicaciones físicas (ej. "Piso 2"), con `codigo` usado en la URL pública del TV (`/display?zone=piso2`). |
 | `puntos_atencion` | Consultorios/cajas/módulos. Pertenecen a una zona y una especialidad; tienen `estado` (`fuera_de_linea`\|`disponible`\|`atendiendo`\|`pausado`). |
 | `agentes_puntos_atencion` | Asignación agente ↔ punto de atención (quién es responsable de operarlo). |
-| `configuraciones_globales` | Fila única (`id=1`) con las reglas de negocio editables: algoritmo de cola, tolerancias, límite de ausencias, formato de privacidad TV, intercalado preferencial/normal. |
+| `configuraciones_globales` | Fila única (`id=1`) con las reglas de negocio editables: algoritmo de cola, tolerancias, límite de ausencias, formato de privacidad TV, modo de audio TV (`tono`\|`voz`\|`tono_voz`), si el módulo de Citas Programadas está activo, intercalado preferencial/normal. |
 | `turnos` | El ticket del paciente. Contiene PII (`documento_paciente`, `nombre_paciente`) — nunca se expone a `anon`. Estado (`estado_turno`): `programado → en_espera → llamado → en_atencion → finalizado`, con ramas `cancelado`, `ausente → reingresado`. |
 | `llamados` | Log de eventos de llamado, **ya anonimizado** en el momento de insertarse (`etiqueta_publica`). Es la fuente de datos del TV Display — nunca contiene PII. |
 | `auditoria` | Trazabilidad de saltos de cola, cierres de jornada, ausencias, etc. |
@@ -79,7 +79,7 @@ FlowQ gestiona el flujo completo de atención al público: desde el check-in de 
 - **RLS (Row Level Security)** habilitado en todas las tablas. Política general: cada rol solo puede leer/escribir lo que le corresponde; `turnos` requiere estar `authenticated` con rol de staff; `llamados` y `zonas` son de lectura pública (`anon`) porque no contienen PII y el propio código de zona ya viaja expuesto en la URL del TV.
 - **Autenticación:** email + password vía Supabase Auth. Sesión gestionada con cookies (`@supabase/ssr`), refrescada en cada request por `src/proxy.ts`.
 - **`src/proxy.ts`** (antes `middleware.ts` — Next.js 16 renombró la convención): aplica control de acceso por rol a nivel de ruta como defensa en profundidad adicional a RLS. Redirige a `/login` si no hay sesión, y a la home del rol si el usuario intenta entrar a una sección que no le corresponde.
-- **Service Role Key:** solo se usa en `src/lib/supabase/admin.ts`, exclusivamente desde el Route Handler del cron. Nunca se importa desde código que corra en el navegador.
+- **Service Role Key:** se usa en `src/lib/supabase/admin.ts`, solo server-side. Dos consumidores: el Route Handler del cron, y `src/actions/usuarios.ts` (crear/eliminar cuentas de `auth.users` y leer emails, algo que RLS no puede exponer). Como este cliente bypasea RLS, cada función de `usuarios.ts` valida a mano que quien llama tenga rol `admin` antes de ejecutar nada — nunca se importa desde código que corra en el navegador.
 - **`fn_cerrar_jornada`** solo tiene `GRANT EXECUTE` para `service_role` — ningún usuario autenticado, ni siquiera admin, puede invocarla desde el cliente.
 - **RPCs de transición de estado** validan explícitamente que el agente esté autorizado sobre la cola del turno (`fn_agente_autorizado_turno`) antes de mutar nada, porque al ser `SECURITY DEFINER` bypasan RLS.
 
@@ -100,8 +100,10 @@ FlowQ gestiona el flujo completo de atención al público: desde el check-in de 
 | `/admin/settings` | `admin`, `supervisor` | Configuración Global — Módulo 1 |
 | `/admin/supervisor` | `admin`, `supervisor` | Supervisión Operativa — Módulo 5 |
 | `/admin/infraestructura` | `admin`, `supervisor` | Gestión de Zonas/Servicios/Puntos |
+| `/admin/citas` | `admin`, `supervisor` | Gestión de Citas del Día (módulo opcional) |
 | `/admin/dashboard` | `admin`, `supervisor` | Analytics Ejecutivo |
 | `/admin/reportes` | `admin`, `supervisor` | Resumen ejecutivo imprimible (PDF vía navegador) |
+| `/admin/usuarios` | `admin` únicamente | Roles y Usuarios (usa Service Role Key) |
 | `/api/cron/cierre-jornada` | `CRON_SECRET` (sin sesión) | Cierre de jornada nocturno |
 
 ## 8. Funciones RPC (PL/pgSQL)
@@ -122,70 +124,7 @@ FlowQ gestiona el flujo completo de atención al público: desde el check-in de 
 
 ## 9. Instalación
 
-### 9.1 Requisitos
-
-- Node.js 20+ y npm.
-- Una cuenta y proyecto de Supabase.
-- Una cuenta de Vercel (para el despliegue y el Cron Job).
-
-### 9.2 Pasos
-
-```bash
-git clone https://github.com/sarrigui1/Agiliza.git
-cd Agiliza
-npm install
-cp .env.local.example .env.local
-```
-
-Completar `.env.local`:
-
-```
-NEXT_PUBLIC_SUPABASE_URL=https://<tu-proyecto>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon / publishable key>
-SUPABASE_SERVICE_ROLE_KEY=<service_role key>   # solo servidor, nunca exponer
-CRON_SECRET=<string aleatorio largo>            # generar con: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
-
-Ejecutar las migraciones **en orden estricto** en el SQL Editor de Supabase (o vía Supabase CLI si el proyecto está enlazado):
-
-```
-supabase/migrations/0001_init_schema.sql
-supabase/migrations/0002_rls_policies.sql
-supabase/migrations/0003_fn_llamar_siguiente_turno.sql
-supabase/migrations/0004_rpc_operativas.sql
-supabase/migrations/0005_fn_confirmar_checkin.sql
-supabase/migrations/0006_rpc_atencion.sql
-supabase/migrations/0007_realtime_publication.sql
-supabase/migrations/0008_fn_cerrar_jornada.sql
-supabase/migrations/0009_zonas_activo.sql
-supabase/migrations/0010_zonas_lectura_publica.sql
-supabase/migrations/0011_analytics.sql
-```
-
-Cargar datos base (catálogo de ejemplo, opcional/editable):
-
-```
-supabase/seed.sql
-```
-
-Crear los usuarios de staff desde **Supabase Dashboard → Authentication → Users → Add user** (uno por rol: admin, supervisor, agente, recepción — marcar "Auto Confirm User"). Luego, con el UUID de cada uno, completar y ejecutar:
-
-```
-supabase/seed_perfiles.template.sql
-```
-
-Correr en local:
-
-```bash
-npm run dev
-```
-
-### 9.3 Despliegue en Vercel
-
-1. Importar el repositorio de GitHub en Vercel ("Add New Project").
-2. Cargar las mismas 4 variables de entorno de `.env.local` en **Settings → Environment Variables** (Production, Preview y Development).
-3. Deploy. El Cron Job (`vercel.json`, `0 5 * * *` = 00:00 hora Colombia/UTC-5) se activa automáticamente — no requiere configuración manual, y funciona en el plan Hobby (gratuito) porque es una sola ejecución diaria.
-4. Verificar el endpoint del cron responde `401` sin el header `Authorization: Bearer <CRON_SECRET>`, y `200` con él.
+Ver [`MANUAL_INSTALACION_IMPLEMENTACION.md`](./MANUAL_INSTALACION_IMPLEMENTACION.md) para la guía paso a paso completa (proyecto de Supabase, variables de entorno, las 14 migraciones en orden, primer usuario administrador, y despliegue en Vercel).
 
 ## 10. Recomendaciones Operativas
 
@@ -206,29 +145,29 @@ Documentadas aquí para que no se den por sorpresa en producción — son omisio
 - **Reasignación Masiva** e **Intervenir** en `/admin/supervisor` son botones de UI que muestran un aviso "disponible en la próxima fase" — no hay RPC de reasignación implementada aún.
 - **Pausa de agente:** el header del Workspace muestra "Disponible"/"Atendiendo" derivado del turno activo, no hay un toggle manual de pausa todavía.
 - **Atribución de rendimiento por agente** (`fn_rendimiento_por_agente`): usa la asignación *actual* en `agentes_puntos_atencion`, no un histórico por turno — si un agente cambió de punto a mitad del periodo consultado, el reparto no es perfectamente preciso. Suficiente para una vista ejecutiva agregada, no para auditoría individual exacta.
-- **Recuperación de contraseña:** no hay flujo de "¿Olvidó su contraseña?" implementado en `/login` — los resets se hacen desde el Supabase Dashboard.
+- **Recuperación de contraseña:** no hay flujo de autoservicio "¿Olvidó su contraseña?" en `/login`. Un administrador puede asignar una nueva contraseña a cualquier usuario desde `/admin/usuarios` (no requiere entrar al Dashboard de Supabase, a diferencia de antes).
 
 ## 12. Estructura de Carpetas (resumen)
 
 ```
 src/
 ├── app/                    # Rutas (App Router)
-│   ├── admin/              # settings, supervisor, infraestructura, dashboard, reportes
+│   ├── admin/              # settings, supervisor, infraestructura, citas, dashboard, reportes, usuarios
 │   ├── api/cron/           # Route Handler del cierre de jornada
 │   ├── checkin/, display/, workspace/, login/
-├── actions/                # Server Actions (checkin, workspace, settings, infrastructure, analytics, reports)
+├── actions/                # Server Actions (checkin, citas, workspace, settings, infrastructure, analytics, reports, usuarios)
 ├── components/
 │   ├── ui/                 # Button, Card, Modal, Badge, Toggle, RadioCard, NumericKeypad
 │   ├── charts/             # StatTile, TrendBarChart, DemandHeatmap
 │   └── shared/              # SignOutButton
 ├── hooks/                  # useRealtimeTurnos, useRealtimeCalls, useClock, useElapsedTime, useTicketAudio, useTick
 ├── lib/
-│   ├── supabase/            # client.ts, server.ts, admin.ts
-│   ├── dateRanges.ts, utils.ts
+│   ├── supabase/            # client.ts, server.ts, admin.ts (Service Role, usado por cron y por actions/usuarios.ts)
+│   ├── voiceMessage.ts, autoFitText.ts, dateRanges.ts, utils.ts
 ├── types/                   # database.ts (tipos generados a mano), domain.ts
 └── proxy.ts                 # Control de acceso por rol (ex-middleware.ts)
 
 supabase/
-├── migrations/               # 0001..0011, en orden estricto
+├── migrations/               # 0001..0014, en orden estricto
 ├── seed.sql, seed_perfiles.template.sql
 ```
