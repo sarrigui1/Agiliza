@@ -7,7 +7,7 @@
  * implementa aquí como pieza mínima necesaria para poder probar el resto end-to-end.
  */
 
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { LogIn, Mail, Eye, EyeOff, ShieldCheck } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
@@ -19,24 +19,29 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [mostrarPassword, setMostrarPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [cargando, setCargando] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  async function iniciarSesion(e: React.FormEvent) {
+  function iniciarSesion(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setCargando(true);
 
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    startTransition(async () => {
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
 
-    setCargando(false);
-    if (authError) {
-      setError('Credenciales inválidas. Verifique su usuario y contraseña.');
-      return;
-    }
+      if (authError) {
+        setError('Credenciales inválidas. Verifique su usuario y contraseña.');
+        return;
+      }
 
-    router.push('/');
-    router.refresh();
+      // `isPending` se deja en `true` a propósito en el camino feliz: no se apaga
+      // antes de navegar, porque este componente se desmonta al completar el
+      // redirect y no hay otro momento "correcto" para volver a habilitar el botón.
+      // Así se evita el par de segundos donde el botón parecía congelado entre el
+      // login exitoso y la redirección real.
+      router.push('/');
+      router.refresh();
+    });
   }
 
   return (
@@ -53,15 +58,18 @@ export default function LoginPage() {
             <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">
               Usuario / Email
             </span>
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-4 py-3">
+            <div
+              className={`flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-4 py-3 transition-opacity ${isPending ? 'opacity-50' : ''}`}
+            >
               <Mail className="size-4 text-muted" />
               <input
                 type="email"
                 required
+                disabled={isPending}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nombre@empresa.com"
-                className="w-full bg-transparent text-text outline-none"
+                className="w-full bg-transparent text-text outline-none disabled:cursor-not-allowed"
               />
             </div>
           </label>
@@ -70,15 +78,23 @@ export default function LoginPage() {
             <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">
               Contraseña
             </span>
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-4 py-3">
+            <div
+              className={`flex items-center gap-2 rounded-lg border border-border bg-surface-elevated px-4 py-3 transition-opacity ${isPending ? 'opacity-50' : ''}`}
+            >
               <input
                 type={mostrarPassword ? 'text' : 'password'}
                 required
+                disabled={isPending}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-transparent text-text outline-none"
+                className="w-full bg-transparent text-text outline-none disabled:cursor-not-allowed"
               />
-              <button type="button" onClick={() => setMostrarPassword((v) => !v)}>
+              <button
+                type="button"
+                disabled={isPending}
+                onClick={() => setMostrarPassword((v) => !v)}
+                className="disabled:cursor-not-allowed"
+              >
                 {mostrarPassword ? (
                   <EyeOff className="size-4 text-muted" />
                 ) : (
@@ -88,11 +104,15 @@ export default function LoginPage() {
             </div>
           </label>
 
-          {error && <p className="text-sm text-danger">{error}</p>}
+          {error && (
+            <p className="rounded-md border border-danger/40 bg-danger/10 px-3 py-2 text-sm text-danger">
+              {error}
+            </p>
+          )}
 
-          <Button type="submit" size="lg" loading={cargando} className="mt-2">
+          <Button type="submit" size="lg" loading={isPending} className="mt-2">
             <LogIn className="size-5" />
-            Iniciar Sesión
+            {isPending ? 'Ingresando…' : 'Iniciar Sesión'}
           </Button>
         </form>
 
