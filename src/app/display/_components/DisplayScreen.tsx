@@ -5,17 +5,19 @@ import { useRealtimeCalls } from '@/hooks/useRealtimeCalls';
 import { useTicketAudio } from '@/hooks/useTicketAudio';
 import { useClock } from '@/hooks/useClock';
 import { useEffect } from 'react';
-import type { Llamado, Zona } from '@/types/database';
+import type { Llamado, ModoAudioTv, Zona } from '@/types/database';
 import { cn } from '@/lib/utils';
+import { calcularTamanoFuente } from '@/lib/autoFitText';
 
 interface DisplayScreenProps {
   zona: Zona;
   initialCalls: Llamado[];
+  modoAudio: ModoAudioTv;
 }
 
-export function DisplayScreen({ zona, initialCalls }: DisplayScreenProps) {
+export function DisplayScreen({ zona, initialCalls, modoAudio }: DisplayScreenProps) {
   const { calls, onNuevoLlamado } = useRealtimeCalls(zona.id, initialCalls);
-  const { habilitado, habilitar, anunciar } = useTicketAudio();
+  const { habilitado, habilitar, anunciar } = useTicketAudio(modoAudio);
   const { hora, fecha } = useClock();
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function DisplayScreen({ zona, initialCalls }: DisplayScreenProps) {
       )}
 
       <header className="flex items-center justify-between border-b border-border px-16 py-6">
-        <p className="font-mono text-xl font-bold tracking-widest text-primary">Q-SYSTEM ELITE</p>
+        <p className="font-mono text-xl font-bold tracking-widest text-primary">AGILIZA</p>
         <p className="flex items-center gap-2 font-mono text-sm text-primary">
           <span className="size-2 rounded-full bg-primary animate-pulse" />
           REALTIME SYNC
@@ -59,7 +61,12 @@ export function DisplayScreen({ zona, initialCalls }: DisplayScreenProps) {
               key={actual.id}
               className="animate-flash-in rounded-lg border-2 border-primary bg-surface px-12 py-10 glow-primary"
             >
-              <p className="break-all font-mono text-[7rem] font-bold leading-none tracking-wider text-primary">
+              <p
+                className="break-words font-mono font-bold leading-tight tracking-wider text-primary"
+                style={{
+                  fontSize: `${calcularTamanoFuente(actual.etiqueta_publica, { max: 112, min: 40, factor: 1200 })}px`,
+                }}
+              >
                 {actual.etiqueta_publica}
               </p>
             </div>
@@ -90,7 +97,14 @@ export function DisplayScreen({ zona, initialCalls }: DisplayScreenProps) {
                 key={llamado.id}
                 className={cn('py-5', i === 0 && 'text-text', i > 0 && 'text-muted')}
               >
-                <p className="font-mono text-3xl font-bold tracking-wide">{llamado.etiqueta_publica}</p>
+                <p
+                  className="break-words font-mono font-bold leading-tight tracking-wide"
+                  style={{
+                    fontSize: `${calcularTamanoFuente(llamado.etiqueta_publica, { max: 30, min: 16, factor: 320 })}px`,
+                  }}
+                >
+                  {llamado.etiqueta_publica}
+                </p>
                 <p className="text-sm">{llamado.etiqueta_punto_atencion}</p>
               </li>
             ))}

@@ -76,7 +76,11 @@ export function SettingsForm({ configuracionInicial }: { configuracionInicial: C
           reingresoPenalizado={draft.reingreso_penalizado}
           onChange={patch}
         />
-        <PrivacyCard formatoPrivacidadTv={draft.formato_privacidad_tv} onChange={patch} />
+        <PrivacyCard
+          formatoPrivacidadTv={draft.formato_privacidad_tv}
+          modoAudioTv={draft.modo_audio_tv}
+          onChange={patch}
+        />
       </div>
     </main>
   );

@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { DisplayScreen } from './_components/DisplayScreen';
+import type { ModoAudioTv } from '@/types/database';
 
 export const dynamic = 'force-dynamic';
 
@@ -13,7 +14,7 @@ export default async function DisplayPage({ searchParams }: DisplayPageProps) {
   if (!zone) {
     return (
       <main className="flex h-dvh flex-col items-center justify-center gap-3 bg-bg text-center">
-        <p className="font-mono text-sm uppercase tracking-widest text-muted">Q-System Elite</p>
+        <p className="font-mono text-sm uppercase tracking-widest text-muted">Agiliza</p>
         <h1 className="text-2xl font-semibold text-text">Falta el parámetro de zona</h1>
         <p className="font-mono text-sm text-muted">
           Use la URL con el formato <span className="text-primary">/display?zone=piso2</span>
@@ -24,11 +25,10 @@ export default async function DisplayPage({ searchParams }: DisplayPageProps) {
 
   const supabase = await createClient();
 
-  const { data: zona } = await supabase
-    .from('zonas')
-    .select('*')
-    .eq('codigo', zone)
-    .maybeSingle();
+  const [{ data: zona }, { data: config }] = await Promise.all([
+    supabase.from('zonas').select('*').eq('codigo', zone).maybeSingle(),
+    supabase.from('configuraciones_globales').select('modo_audio_tv').eq('id', 1).maybeSingle(),
+  ]);
 
   if (!zona) {
     return (
@@ -46,5 +46,7 @@ export default async function DisplayPage({ searchParams }: DisplayPageProps) {
     .order('created_at', { ascending: false })
     .limit(6);
 
-  return <DisplayScreen zona={zona} initialCalls={llamados ?? []} />;
+  const modoAudio: ModoAudioTv = config?.modo_audio_tv ?? 'tono_voz';
+
+  return <DisplayScreen zona={zona} initialCalls={llamados ?? []} modoAudio={modoAudio} />;
 }
