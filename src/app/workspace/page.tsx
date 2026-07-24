@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { rangoHoyColombia } from '@/lib/dateRanges';
 import { WorkspaceView } from './_components/WorkspaceView';
 
 export const dynamic = 'force-dynamic';
@@ -45,8 +46,7 @@ export default async function WorkspacePage() {
     .in('estado', ['en_espera', 'llamado', 'en_atencion'])
     .order('hora_llegada', { ascending: true });
 
-  const inicioDelDia = new Date();
-  inicioDelDia.setHours(0, 0, 0, 0);
+  const { desde: inicioDelDia } = rangoHoyColombia();
 
   const { data: finalizadosHoy } = await supabase
     .from('turnos')

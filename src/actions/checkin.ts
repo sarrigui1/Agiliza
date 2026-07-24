@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { rangoHoyColombia } from '@/lib/dateRanges';
 import { ok, fail, type ActionResult, type CitaEncontrada, type TurnoConEstimado } from '@/types/domain';
 import type { Turno } from '@/types/database';
 
@@ -33,8 +34,7 @@ async function calcularTiempoEstimado(
   especialidadId: string,
   zonaId: string,
 ): Promise<number> {
-  const inicioDelDia = new Date();
-  inicioDelDia.setHours(0, 0, 0, 0);
+  const { desde: inicioDelDia } = rangoHoyColombia();
 
   const [{ count: enEspera }, { data: finalizadosHoy }] = await Promise.all([
     supabase
@@ -89,10 +89,7 @@ export async function buscarTurnoProgramado(
     return fail('No se pudo cargar la configuración del sistema.');
   }
 
-  const inicioDelDia = new Date();
-  inicioDelDia.setHours(0, 0, 0, 0);
-  const finDelDia = new Date();
-  finDelDia.setHours(23, 59, 59, 999);
+  const { desde: inicioDelDia, hasta: finDelDia } = rangoHoyColombia();
 
   // El QR puede traer el documento del paciente o el código de ticket ya emitido
   // (ej. si se reimprime la cita); se acepta cualquiera de las dos coincidencias.
@@ -103,7 +100,7 @@ export async function buscarTurnoProgramado(
     .eq('estado', 'programado')
     .or(`documento_paciente.eq.${valor},codigo.eq.${valor}`)
     .gte('hora_cita', inicioDelDia.toISOString())
-    .lte('hora_cita', finDelDia.toISOString())
+    .lt('hora_cita', finDelDia.toISOString())
     .order('hora_cita', { ascending: true });
 
   if (error) {

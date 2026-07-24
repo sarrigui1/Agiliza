@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { rangoHoyColombia } from '@/lib/dateRanges';
 import { ok, fail, type ActionResult } from '@/types/domain';
 import type { Turno } from '@/types/database';
 
@@ -16,17 +17,14 @@ import type { Turno } from '@/types/database';
 export async function listarCitasDelDia(): Promise<ActionResult<Turno[]>> {
   const supabase = await createClient();
 
-  const inicioDelDia = new Date();
-  inicioDelDia.setHours(0, 0, 0, 0);
-  const finDelDia = new Date();
-  finDelDia.setHours(23, 59, 59, 999);
+  const { desde: inicioDelDia, hasta: finDelDia } = rangoHoyColombia();
 
   const { data, error } = await supabase
     .from('turnos')
     .select('*')
     .eq('tipo_turno', 'cita_previa')
     .gte('hora_cita', inicioDelDia.toISOString())
-    .lte('hora_cita', finDelDia.toISOString())
+    .lt('hora_cita', finDelDia.toISOString())
     .order('hora_cita', { ascending: true });
 
   if (error) return fail(error.message);

@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { rangoHoyColombia } from '@/lib/dateRanges';
 import { SupervisorDashboard, type TerminalInfo, type TpeArea } from './_components/SupervisorDashboard';
 
 export const dynamic = 'force-dynamic';
@@ -8,8 +9,7 @@ const UMBRAL_SATURACION = 6; // turnos en espera simultáneos para marcar un pun
 export default async function AdminSupervisorPage() {
   const supabase = await createClient();
 
-  const inicioDelDia = new Date();
-  inicioDelDia.setHours(0, 0, 0, 0);
+  const { desde: inicioDelDia } = rangoHoyColombia();
 
   const [
     { data: puntos },
