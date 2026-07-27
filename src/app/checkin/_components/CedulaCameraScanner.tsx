@@ -3,7 +3,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserPDF417Reader } from '@zxing/browser';
 import type { IScannerControls } from '@zxing/browser';
+import { DecodeHintType } from '@zxing/library';
 import { Modal } from '@/components/ui/Modal';
+
+/**
+ * Sin esto, el decoder usa su pasada rápida por defecto — suficiente para un QR grande,
+ * pero un PDF417 es un código apilado mucho más denso (varias filas de barras finas) y
+ * casi nunca se lee sin TRY_HARDER, que le pide al decoder intentar más agresivamente
+ * antes de rendirse en cada frame (más lento por frame, pero es la diferencia entre leer
+ * o no leer una cédula real).
+ */
+const HINTS = new Map([[DecodeHintType.TRY_HARDER, true]]);
 
 interface CedulaCameraScannerProps {
   open: boolean;
@@ -32,12 +42,18 @@ export function CedulaCameraScanner({ open, onClose, onResult }: CedulaCameraSca
   useEffect(() => {
     if (!open) return;
 
-    const reader = new BrowserPDF417Reader();
+    const reader = new BrowserPDF417Reader(HINTS);
     let cancelado = false;
 
     reader
       .decodeFromConstraints(
-        { video: { facingMode: 'environment' } },
+        {
+          video: {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          },
+        },
         videoRef.current ?? undefined,
         (result, _err, controls) => {
           controlsRef.current = controls;
