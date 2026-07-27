@@ -3,8 +3,23 @@
 import { useEffect, useRef, useState } from 'react';
 import { BrowserPDF417Reader } from '@zxing/browser';
 import type { IScannerControls } from '@zxing/browser';
-import { DecodeHintType } from '@zxing/library';
+import { ChecksumException, DecodeHintType, FormatException, NotFoundException } from '@zxing/library';
 import { Modal } from '@/components/ui/Modal';
+
+/**
+ * Traduce las excepciones de ZXing a algo diagnosticable sin abrir el código fuente de
+ * la librería: NotFoundException = no detectó ningún patrón de código en el frame
+ * (encuadre/distancia/enfoque); ChecksumException = detectó un patrón pero los datos no
+ * pasan la validación (movimiento, código dañado o parcialmente tapado); FormatException
+ * = detectó un patrón pero no logra interpretar su estructura.
+ */
+function describirIntento(err: unknown): string {
+  if (err instanceof NotFoundException) return 'sin patrón detectado';
+  if (err instanceof ChecksumException) return 'patrón detectado, checksum inválido (movimiento o daño)';
+  if (err instanceof FormatException) return 'patrón detectado, formato no reconocido';
+  if (err instanceof Error) return err.message;
+  return 'intentando…';
+}
 
 /**
  * Sin esto, el decoder usa su pasada rápida por defecto — suficiente para un QR grande,
@@ -34,6 +49,8 @@ export function CedulaCameraScanner({ open, onClose, onResult }: CedulaCameraSca
   const controlsRef = useRef<IScannerControls | null>(null);
   const onResultRef = useRef(onResult);
   const [error, setError] = useState<string | null>(null);
+  const [intentos, setIntentos] = useState(0);
+  const [ultimoEstado, setUltimoEstado] = useState('esperando cámara…');
 
   useEffect(() => {
     onResultRef.current = onResult;
@@ -44,6 +61,7 @@ export function CedulaCameraScanner({ open, onClose, onResult }: CedulaCameraSca
 
     const reader = new BrowserPDF417Reader(HINTS);
     let cancelado = false;
+    let n = 0;
 
     reader
       .decodeFromConstraints(
@@ -55,11 +73,24 @@ export function CedulaCameraScanner({ open, onClose, onResult }: CedulaCameraSca
           },
         },
         videoRef.current ?? undefined,
-        (result, _err, controls) => {
+        (result, err, controls) => {
           controlsRef.current = controls;
-          if (cancelado || !result) return;
-          controls.stop();
-          onResultRef.current(result.getText());
+          if (cancelado) return;
+
+          n += 1;
+          setIntentos(n);
+
+          if (result) {
+            console.debug('[CedulaCameraScanner] lectura exitosa, texto crudo:', result.getText());
+            setUltimoEstado('¡leído!');
+            controls.stop();
+            onResultRef.current(result.getText());
+            return;
+          }
+
+          const estado = describirIntento(err);
+          setUltimoEstado(estado);
+          console.debug(`[CedulaCameraScanner] intento #${n}: ${estado}`);
         },
       )
       .catch((e: unknown) => {
@@ -84,6 +115,11 @@ export function CedulaCameraScanner({ open, onClose, onResult }: CedulaCameraSca
         <div className="relative w-full overflow-hidden rounded-lg border-2 border-primary bg-black">
           <video ref={videoRef} className="w-full" muted playsInline />
         </div>
+        {open && !error && (
+          <p className="w-full text-center font-mono text-xs text-muted">
+            Intento #{intentos} — {ultimoEstado}
+          </p>
+        )}
         {open && error && <p className="text-sm text-danger">{error}</p>}
       </div>
     </Modal>
