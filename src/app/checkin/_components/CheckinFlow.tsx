@@ -21,9 +21,15 @@ interface CheckinFlowProps {
   especialidades: Especialidad[];
   zonas: Zona[];
   permitirCitasProgramadas: boolean;
+  permitirLecturaCedula: boolean;
 }
 
-export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }: CheckinFlowProps) {
+export function CheckinFlow({
+  especialidades,
+  zonas,
+  permitirCitasProgramadas,
+  permitirLecturaCedula,
+}: CheckinFlowProps) {
   const pasoInicial: Paso = permitirCitasProgramadas ? 'landing' : 'espontaneo';
   const [paso, setPaso] = useState<Paso>(pasoInicial);
   const [documento, setDocumento] = useState('');
@@ -97,7 +103,10 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
     });
   }
 
-  useBarcodeScannerListener(manejarEscaneo, paso !== 'cita-resultados' && !ticket);
+  useBarcodeScannerListener(
+    manejarEscaneo,
+    permitirLecturaCedula && paso !== 'cita-resultados' && !ticket,
+  );
 
   function confirmarCita(turnoId: string) {
     setError(null);
@@ -136,7 +145,7 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
 
         {paso === 'landing' && (
           <div className="w-full max-w-4xl">
-            <IndicadorEscaneo onEscanear={() => setModalCamara(true)} />
+            {permitirLecturaCedula && <IndicadorEscaneo onEscanear={() => setModalCamara(true)} />}
             <div className="grid grid-cols-2 gap-8">
               <OpcionCard
                 icon={<CalendarCheck className="size-8 text-primary" />}
@@ -159,7 +168,7 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
         {paso === 'cita-documento' && (
           <div className="w-full">
             <BotonVolver onClick={reiniciar} />
-            <IndicadorEscaneo onEscanear={() => setModalCamara(true)} />
+            {permitirLecturaCedula && <IndicadorEscaneo onEscanear={() => setModalCamara(true)} />}
             <NumericKeypad
               value={documento}
               onChange={setDocumento}
@@ -223,6 +232,7 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
             documento={documentoEspontaneo}
             onNombreChange={setNombreEspontaneo}
             onDocumentoChange={setDocumentoEspontaneo}
+            permitirLecturaCedula={permitirLecturaCedula}
             onEscanear={() => setModalCamara(true)}
             onCancelar={reiniciar}
             onCreado={(t) => setTicket(t)}
@@ -230,7 +240,9 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
         )}
       </div>
 
-      <CedulaCameraScanner open={modalCamara} onClose={() => setModalCamara(false)} onResult={manejarEscaneo} />
+      {permitirLecturaCedula && (
+        <CedulaCameraScanner open={modalCamara} onClose={() => setModalCamara(false)} onResult={manejarEscaneo} />
+      )}
 
       <footer className="border-t border-primary bg-surface px-16 py-3 text-center font-mono text-xs uppercase tracking-widest text-muted">
         Sistema de Gestión de Turnos — FlowQ &nbsp;|&nbsp; Recuerde tener su documento a la mano
@@ -314,6 +326,7 @@ function EspontaneoForm({
   documento,
   onNombreChange,
   onDocumentoChange,
+  permitirLecturaCedula,
   onEscanear,
   onCancelar,
   onCreado,
@@ -324,6 +337,7 @@ function EspontaneoForm({
   documento: string;
   onNombreChange: (v: string) => void;
   onDocumentoChange: (v: string) => void;
+  permitirLecturaCedula: boolean;
   onEscanear: () => void;
   onCancelar: () => void;
   onCreado: (t: TurnoConEstimado) => void;
@@ -356,7 +370,7 @@ function EspontaneoForm({
     <div className="w-full max-w-xl">
       <BotonVolver onClick={onCancelar} />
       <h2 className="mb-6 text-2xl font-semibold text-text">Registrar turno espontáneo</h2>
-      <IndicadorEscaneo onEscanear={onEscanear} />
+      {permitirLecturaCedula && <IndicadorEscaneo onEscanear={onEscanear} />}
 
       {error && <p className="mb-4 text-sm text-danger">{error}</p>}
 

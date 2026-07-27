@@ -67,6 +67,7 @@ export function SettingsForm({ configuracionInicial }: { configuracionInicial: C
         />
         <TolerancesCard
           permitirCitasProgramadas={draft.permitir_citas_programadas}
+          permitirLecturaCedula={draft.permitir_lectura_cedula}
           minutosCheckinPrevio={draft.minutos_checkin_previo}
           minutosTolerancia={draft.minutos_tolerancia}
           segundosIntervaloRellamado={draft.segundos_intervalo_rellamado}

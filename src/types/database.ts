@@ -151,6 +151,7 @@ export interface Database {
           formato_privacidad_tv: FormatoPrivacidadTv;
           modo_audio_tv: ModoAudioTv;
           permitir_citas_programadas: boolean;
+          permitir_lectura_cedula: boolean;
           intercalado_preferencial: number;
           intercalado_normal: number;
           updated_at: string;

@@ -9,7 +9,11 @@ export default async function CheckinPage() {
   const [{ data: especialidades }, { data: zonas }, { data: config }] = await Promise.all([
     supabase.from('especialidades').select('*').eq('activo', true).order('nombre'),
     supabase.from('zonas').select('*').order('nombre'),
-    supabase.from('configuraciones_globales').select('permitir_citas_programadas').eq('id', 1).maybeSingle(),
+    supabase
+      .from('configuraciones_globales')
+      .select('permitir_citas_programadas, permitir_lectura_cedula')
+      .eq('id', 1)
+      .maybeSingle(),
   ]);
 
   return (
@@ -17,6 +21,7 @@ export default async function CheckinPage() {
       especialidades={especialidades ?? []}
       zonas={zonas ?? []}
       permitirCitasProgramadas={config?.permitir_citas_programadas ?? false}
+      permitirLecturaCedula={config?.permitir_lectura_cedula ?? false}
     />
   );
 }

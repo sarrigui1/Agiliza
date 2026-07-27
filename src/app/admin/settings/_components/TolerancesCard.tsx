@@ -4,11 +4,13 @@ import { Toggle } from '@/components/ui/Toggle';
 
 interface TolerancesCardProps {
   permitirCitasProgramadas: boolean;
+  permitirLecturaCedula: boolean;
   minutosCheckinPrevio: number;
   minutosTolerancia: number;
   segundosIntervaloRellamado: number;
   onChange: (patch: Partial<{
     permitir_citas_programadas: boolean;
+    permitir_lectura_cedula: boolean;
     minutos_checkin_previo: number;
     minutos_tolerancia: number;
     segundos_intervalo_rellamado: number;
@@ -45,6 +47,7 @@ function CampoNumerico({
 
 export function TolerancesCard({
   permitirCitasProgramadas,
+  permitirLecturaCedula,
   minutosCheckinPrevio,
   minutosTolerancia,
   segundosIntervaloRellamado,
@@ -57,12 +60,18 @@ export function TolerancesCard({
         Tiempos y Tolerancia
       </CardTitle>
 
-      <div className="mb-6 border-b border-border pb-6">
+      <div className="mb-6 flex flex-col gap-4 border-b border-border pb-6">
         <Toggle
           checked={permitirCitasProgramadas}
           onChange={(v) => onChange({ permitir_citas_programadas: v })}
           label="Módulo de Citas Programadas / Agenda"
           description="Habilita el flujo de 'Tengo Cita Programada' en Check-In. Si está apagado, el tótem entra directo al registro de turno."
+        />
+        <Toggle
+          checked={permitirLecturaCedula}
+          onChange={(v) => onChange({ permitir_lectura_cedula: v })}
+          label="Lectura de Cédula (código de barras)"
+          description="Muestra el aviso y el botón de escaneo por cámara en Check-In, y activa la escucha de un lector físico USB/Bluetooth."
         />
       </div>
 
