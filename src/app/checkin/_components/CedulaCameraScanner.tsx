@@ -59,7 +59,13 @@ export function CedulaCameraScanner({ open, onClose, onResult }: CedulaCameraSca
   useEffect(() => {
     if (!open) return;
 
-    const reader = new BrowserPDF417Reader(HINTS);
+    // `delayBetweenScanAttempts` por defecto es 500ms — con la cédula sostenida a mano
+    // (no apoyada), el temblor natural mete borrosidad en la mayoría de esos intentos
+    // espaciados; bajarlo multiplica las oportunidades de agarrar un frame nítido en el
+    // instante en que la mano está momentáneamente quieta. `ChecksumException` repetido
+    // (patrón detectado pero datos inválidos) es la firma típica de borrosidad, no de mal
+    // encuadre — por eso el fix es más frecuencia de intento, no mejor detección.
+    const reader = new BrowserPDF417Reader(HINTS, { delayBetweenScanAttempts: 100 });
     let cancelado = false;
     let n = 0;
 
@@ -70,6 +76,7 @@ export function CedulaCameraScanner({ open, onClose, onResult }: CedulaCameraSca
             facingMode: { ideal: 'environment' },
             width: { ideal: 1920 },
             height: { ideal: 1080 },
+            frameRate: { ideal: 30 },
           },
         },
         videoRef.current ?? undefined,
@@ -110,7 +117,8 @@ export function CedulaCameraScanner({ open, onClose, onResult }: CedulaCameraSca
     <Modal open={open} onClose={onClose} title="Escanear Cédula">
       <div className="flex flex-col items-center gap-4">
         <p className="text-center text-sm text-muted">
-          Acerca el código de barras (PDF417, al respaldo de la cédula) a la cámara.
+          Acerca el código de barras (PDF417, al respaldo de la cédula) a la cámara. Apóyala sobre una
+          superficie si es posible — la mano quieta ayuda mucho más que la distancia exacta.
         </p>
         <div className="relative w-full overflow-hidden rounded-lg border-2 border-primary bg-black">
           <video ref={videoRef} className="w-full" muted playsInline />
