@@ -1,16 +1,19 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { CalendarCheck, UserPlus, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { CalendarCheck, UserPlus, ArrowLeft, AlertTriangle, ScanLine, IdCard } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Toggle } from '@/components/ui/Toggle';
 import { NumericKeypad } from '@/components/ui/NumericKeypad';
 import { useClock } from '@/hooks/useClock';
+import { useBarcodeScannerListener } from '@/hooks/useBarcodeScannerListener';
+import { parseCedulaColombiana } from '@/lib/parseCedulaColombiana';
 import { buscarTurnoProgramado, confirmarCheckIn, crearTurnoEspontaneo } from '@/actions/checkin';
 import type { Especialidad, Zona } from '@/types/database';
 import type { CitaEncontrada, TurnoConEstimado } from '@/types/domain';
 import { TicketModal } from './TicketModal';
+import { CedulaCameraScanner } from './CedulaCameraScanner';
 
 type Paso = 'landing' | 'cita-documento' | 'cita-resultados' | 'espontaneo';
 
@@ -27,6 +30,9 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
   const [citas, setCitas] = useState<CitaEncontrada[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [ticket, setTicket] = useState<TurnoConEstimado | null>(null);
+  const [modalCamara, setModalCamara] = useState(false);
+  const [nombreEspontaneo, setNombreEspontaneo] = useState('');
+  const [documentoEspontaneo, setDocumentoEspontaneo] = useState('');
   const [isPending, startTransition] = useTransition();
   const { hora, fecha } = useClock();
 
@@ -35,6 +41,8 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
     setDocumento('');
     setCitas([]);
     setError(null);
+    setNombreEspontaneo('');
+    setDocumentoEspontaneo('');
   }
 
   function buscarCita() {
@@ -49,6 +57,47 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
       setPaso('cita-resultados');
     });
   }
+
+  /**
+   * Punto único de entrada para ambas fuentes de lectura (lector USB/Bluetooth y
+   * cámara) — así el resto de la UI no necesita saber de dónde vino el dato.
+   *
+   * En 'espontaneo' solo se precarga el formulario (nombre + documento): no se puede
+   * avanzar automáticamente al ticket porque todavía falta que un humano elija
+   * especialidad y zona, y auto-enviar eso produciría turnos mal clasificados. En
+   * 'landing'/'cita-documento' sí se busca de inmediato — sin esperar a que el estado
+   * `documento` se actualice (sería un valor obsoleto en este mismo tick), se busca
+   * directamente con el número recién leído.
+   */
+  function manejarEscaneo(raw: string) {
+    const cedula = parseCedulaColombiana(raw);
+    if (!cedula) {
+      setError('No se pudo leer el código de la cédula. Intenta de nuevo o digita el número manualmente.');
+      return;
+    }
+    setError(null);
+    setModalCamara(false);
+
+    if (paso === 'espontaneo') {
+      setNombreEspontaneo(cedula.nombreCompleto);
+      setDocumentoEspontaneo(cedula.numeroDocumento);
+      return;
+    }
+
+    setDocumento(cedula.numeroDocumento);
+    setPaso('cita-documento');
+    startTransition(async () => {
+      const res = await buscarTurnoProgramado(cedula.numeroDocumento);
+      if (!res.ok) {
+        setError(res.error);
+        return;
+      }
+      setCitas(res.data);
+      setPaso('cita-resultados');
+    });
+  }
+
+  useBarcodeScannerListener(manejarEscaneo, paso !== 'cita-resultados' && !ticket);
 
   function confirmarCita(turnoId: string) {
     setError(null);
@@ -86,27 +135,31 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
         )}
 
         {paso === 'landing' && (
-          <div className="grid w-full max-w-4xl grid-cols-2 gap-8">
-            <OpcionCard
-              icon={<CalendarCheck className="size-8 text-primary" />}
-              iconBg="bg-primary/10"
-              titulo="Tengo Cita Programada"
-              descripcion="Validación rápida para pacientes con reserva previa."
-              onClick={() => setPaso('cita-documento')}
-            />
-            <OpcionCard
-              icon={<UserPlus className="size-8 text-secondary" />}
-              iconBg="bg-secondary/10"
-              titulo="Turno Espontáneo"
-              descripcion="Atención sin cita para servicios generales y consultas."
-              onClick={() => setPaso('espontaneo')}
-            />
+          <div className="w-full max-w-4xl">
+            <IndicadorEscaneo onEscanear={() => setModalCamara(true)} />
+            <div className="grid grid-cols-2 gap-8">
+              <OpcionCard
+                icon={<CalendarCheck className="size-8 text-primary" />}
+                iconBg="bg-primary/10"
+                titulo="Tengo Cita Programada"
+                descripcion="Validación rápida para pacientes con reserva previa."
+                onClick={() => setPaso('cita-documento')}
+              />
+              <OpcionCard
+                icon={<UserPlus className="size-8 text-secondary" />}
+                iconBg="bg-secondary/10"
+                titulo="Turno Espontáneo"
+                descripcion="Atención sin cita para servicios generales y consultas."
+                onClick={() => setPaso('espontaneo')}
+              />
+            </div>
           </div>
         )}
 
         {paso === 'cita-documento' && (
           <div className="w-full">
             <BotonVolver onClick={reiniciar} />
+            <IndicadorEscaneo onEscanear={() => setModalCamara(true)} />
             <NumericKeypad
               value={documento}
               onChange={setDocumento}
@@ -166,11 +219,18 @@ export function CheckinFlow({ especialidades, zonas, permitirCitasProgramadas }:
           <EspontaneoForm
             especialidades={especialidades}
             zonas={zonas}
+            nombre={nombreEspontaneo}
+            documento={documentoEspontaneo}
+            onNombreChange={setNombreEspontaneo}
+            onDocumentoChange={setDocumentoEspontaneo}
+            onEscanear={() => setModalCamara(true)}
             onCancelar={reiniciar}
             onCreado={(t) => setTicket(t)}
           />
         )}
       </div>
+
+      <CedulaCameraScanner open={modalCamara} onClose={() => setModalCamara(false)} onResult={manejarEscaneo} />
 
       <footer className="border-t border-primary bg-surface px-16 py-3 text-center font-mono text-xs uppercase tracking-widest text-muted">
         Sistema de Gestión de Turnos — FlowQ &nbsp;|&nbsp; Recuerde tener su documento a la mano
@@ -230,19 +290,44 @@ function BotonVolver({ onClick }: { onClick: () => void }) {
   );
 }
 
+function IndicadorEscaneo({ onEscanear }: { onEscanear: () => void }) {
+  return (
+    <div className="mb-8 flex flex-col items-center gap-3 rounded-lg border border-primary/40 bg-primary/5 px-6 py-4 text-center">
+      <div className="flex items-center gap-2 text-primary">
+        <IdCard className="size-5" />
+        <p className="font-mono text-sm uppercase tracking-widest">
+          Acerca el código de barras de tu cédula al lector o digita tu número
+        </p>
+      </div>
+      <Button variant="outline" size="default" onClick={onEscanear}>
+        <ScanLine className="size-4" />
+        Escanear con Cámara
+      </Button>
+    </div>
+  );
+}
+
 function EspontaneoForm({
   especialidades,
   zonas,
+  nombre,
+  documento,
+  onNombreChange,
+  onDocumentoChange,
+  onEscanear,
   onCancelar,
   onCreado,
 }: {
   especialidades: Especialidad[];
   zonas: Zona[];
+  nombre: string;
+  documento: string;
+  onNombreChange: (v: string) => void;
+  onDocumentoChange: (v: string) => void;
+  onEscanear: () => void;
   onCancelar: () => void;
   onCreado: (t: TurnoConEstimado) => void;
 }) {
-  const [nombre, setNombre] = useState('');
-  const [documento, setDocumento] = useState('');
   const [especialidadId, setEspecialidadId] = useState(especialidades[0]?.id ?? '');
   const [zonaId, setZonaId] = useState(zonas[0]?.id ?? '');
   const [preferencial, setPreferencial] = useState(false);
@@ -271,6 +356,7 @@ function EspontaneoForm({
     <div className="w-full max-w-xl">
       <BotonVolver onClick={onCancelar} />
       <h2 className="mb-6 text-2xl font-semibold text-text">Registrar turno espontáneo</h2>
+      <IndicadorEscaneo onEscanear={onEscanear} />
 
       {error && <p className="mb-4 text-sm text-danger">{error}</p>}
 
@@ -278,7 +364,7 @@ function EspontaneoForm({
         <Campo label="Nombre completo">
           <input
             value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
+            onChange={(e) => onNombreChange(e.target.value)}
             className="w-full rounded-lg border border-border bg-surface-elevated px-4 py-3 text-text"
             placeholder="Juan Pérez"
           />
@@ -286,7 +372,7 @@ function EspontaneoForm({
         <Campo label="Documento">
           <input
             value={documento}
-            onChange={(e) => setDocumento(e.target.value.replace(/\D/g, ''))}
+            onChange={(e) => onDocumentoChange(e.target.value.replace(/\D/g, ''))}
             className="w-full rounded-lg border border-border bg-surface-elevated px-4 py-3 text-text"
             placeholder="1020304050"
             inputMode="numeric"
