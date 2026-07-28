@@ -131,7 +131,14 @@ export async function buscarTurnoProgramado(
 // ---------------------------------------------------------------------------------------
 // 2) Confirmar el check-in de una cita programada -> pasa a 'en_espera'
 // ---------------------------------------------------------------------------------------
-export async function confirmarCheckIn(turnoId: string): Promise<ActionResult<TurnoConEstimado>> {
+export async function confirmarCheckIn(
+  turnoId: string,
+  aceptoTratamientoDatos: boolean,
+): Promise<ActionResult<TurnoConEstimado>> {
+  if (!aceptoTratamientoDatos) {
+    return fail('Debe aceptar la Política de Tratamiento de Datos para continuar.');
+  }
+
   const supabase = await createClient();
 
   const {
@@ -145,6 +152,7 @@ export async function confirmarCheckIn(turnoId: string): Promise<ActionResult<Tu
   const { data, error } = await supabase.rpc('fn_confirmar_checkin', {
     p_turno_id: turnoId,
     p_agente_id: user.id,
+    p_acepto_tratamiento_datos: aceptoTratamientoDatos,
   });
 
   if (error) {
@@ -167,6 +175,7 @@ export interface CrearTurnoEspontaneoInput {
   especialidadId: string;
   zonaId: string;
   esPreferencial?: boolean;
+  aceptoTratamientoDatos: boolean;
 }
 
 export async function crearTurnoEspontaneo(
@@ -180,6 +189,9 @@ export async function crearTurnoEspontaneo(
   }
   if (!input.especialidadId || !input.zonaId) {
     return fail('Debe seleccionar especialidad y zona de atención.');
+  }
+  if (!input.aceptoTratamientoDatos) {
+    return fail('Debe aceptar la Política de Tratamiento de Datos para continuar.');
   }
 
   const supabase = await createClient();
@@ -213,6 +225,8 @@ export async function crearTurnoEspontaneo(
       estado: 'en_espera',
       documento_paciente: documento,
       nombre_paciente: nombre,
+      acepto_tratamiento_datos: true,
+      fecha_consentimiento_datos: new Date().toISOString(),
       hora_llegada: new Date().toISOString(),
       creado_por: user.id,
     })

@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { CalendarCheck, UserPlus, ArrowLeft, AlertTriangle, ScanLine, IdCard } from 'lucide-react';
+import { CalendarCheck, UserPlus, ArrowLeft, AlertTriangle, ScanLine, IdCard, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Toggle } from '@/components/ui/Toggle';
+import { Modal } from '@/components/ui/Modal';
 import { NumericKeypad } from '@/components/ui/NumericKeypad';
 import { useClock } from '@/hooks/useClock';
 import { useBarcodeScannerListener } from '@/hooks/useBarcodeScannerListener';
@@ -22,6 +23,7 @@ interface CheckinFlowProps {
   zonas: Zona[];
   permitirCitasProgramadas: boolean;
   permitirLecturaCedula: boolean;
+  politicaDatos: string;
 }
 
 export function CheckinFlow({
@@ -29,6 +31,7 @@ export function CheckinFlow({
   zonas,
   permitirCitasProgramadas,
   permitirLecturaCedula,
+  politicaDatos,
 }: CheckinFlowProps) {
   const pasoInicial: Paso = permitirCitasProgramadas ? 'landing' : 'espontaneo';
   const [paso, setPaso] = useState<Paso>(pasoInicial);
@@ -39,6 +42,7 @@ export function CheckinFlow({
   const [modalCamara, setModalCamara] = useState(false);
   const [nombreEspontaneo, setNombreEspontaneo] = useState('');
   const [documentoEspontaneo, setDocumentoEspontaneo] = useState('');
+  const [aceptoDatos, setAceptoDatos] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { hora, fecha } = useClock();
 
@@ -49,6 +53,7 @@ export function CheckinFlow({
     setError(null);
     setNombreEspontaneo('');
     setDocumentoEspontaneo('');
+    setAceptoDatos(false);
   }
 
   function buscarCita() {
@@ -111,7 +116,7 @@ export function CheckinFlow({
   function confirmarCita(turnoId: string) {
     setError(null);
     startTransition(async () => {
-      const res = await confirmarCheckIn(turnoId);
+      const res = await confirmarCheckIn(turnoId, aceptoDatos);
       if (!res.ok) {
         setError(res.error);
         return;
@@ -198,6 +203,7 @@ export function CheckinFlow({
           <div className="w-full max-w-2xl">
             <BotonVolver onClick={reiniciar} />
             <h2 className="mb-6 text-center text-2xl font-semibold text-text">Citas encontradas</h2>
+            <ConsentimientoDatos aceptado={aceptoDatos} onChange={setAceptoDatos} politicaDatos={politicaDatos} />
             <div className="flex flex-col gap-4">
               {citas.map((cita) => (
                 <div
@@ -215,7 +221,7 @@ export function CheckinFlow({
                       </Badge>
                     )}
                   </div>
-                  <Button onClick={() => confirmarCita(cita.id)} loading={isPending}>
+                  <Button onClick={() => confirmarCita(cita.id)} loading={isPending} disabled={!aceptoDatos}>
                     Confirmar Llegada
                   </Button>
                 </div>
@@ -236,6 +242,9 @@ export function CheckinFlow({
             onEscanear={() => setModalCamara(true)}
             onCancelar={reiniciar}
             onCreado={(t) => setTicket(t)}
+            aceptoDatos={aceptoDatos}
+            onAceptoDatosChange={setAceptoDatos}
+            politicaDatos={politicaDatos}
           />
         )}
       </div>
@@ -330,6 +339,9 @@ function EspontaneoForm({
   onEscanear,
   onCancelar,
   onCreado,
+  aceptoDatos,
+  onAceptoDatosChange,
+  politicaDatos,
 }: {
   especialidades: Especialidad[];
   zonas: Zona[];
@@ -341,6 +353,9 @@ function EspontaneoForm({
   onEscanear: () => void;
   onCancelar: () => void;
   onCreado: (t: TurnoConEstimado) => void;
+  aceptoDatos: boolean;
+  onAceptoDatosChange: (v: boolean) => void;
+  politicaDatos: string;
 }) {
   const [especialidadId, setEspecialidadId] = useState(especialidades[0]?.id ?? '');
   const [zonaId, setZonaId] = useState(zonas[0]?.id ?? '');
@@ -357,6 +372,7 @@ function EspontaneoForm({
         especialidadId,
         zonaId,
         esPreferencial: preferencial,
+        aceptoTratamientoDatos: aceptoDatos,
       });
       if (!res.ok) {
         setError(res.error);
@@ -426,12 +442,14 @@ function EspontaneoForm({
           description="Adultos mayores, embarazadas, discapacidad."
         />
 
+        <ConsentimientoDatos aceptado={aceptoDatos} onChange={onAceptoDatosChange} politicaDatos={politicaDatos} />
+
         <Button
           size="lg"
           className="mt-2"
           onClick={crear}
           loading={isPending}
-          disabled={!nombre || documento.length < 5 || !especialidadId || !zonaId}
+          disabled={!nombre || documento.length < 5 || !especialidadId || !zonaId || !aceptoDatos}
         >
           Generar Ticket
         </Button>
@@ -446,5 +464,53 @@ function Campo({ label, children }: { label: string; children: React.ReactNode }
       <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">{label}</span>
       {children}
     </label>
+  );
+}
+
+function ConsentimientoDatos({
+  aceptado,
+  onChange,
+  politicaDatos,
+}: {
+  aceptado: boolean;
+  onChange: (v: boolean) => void;
+  politicaDatos: string;
+}) {
+  const [modalAbierto, setModalAbierto] = useState(false);
+
+  return (
+    <div className="flex items-start gap-3 rounded-lg border border-border bg-surface-elevated px-4 py-3">
+      <input
+        type="checkbox"
+        checked={aceptado}
+        onChange={(e) => onChange(e.target.checked)}
+        className="mt-1 size-4 shrink-0 accent-primary"
+        aria-label="Aceptar Política de Tratamiento de Datos"
+      />
+      <p className="text-sm text-muted">
+        Autorizo el tratamiento de mis datos personales conforme a la{' '}
+        <button
+          type="button"
+          onClick={() => setModalAbierto(true)}
+          className="inline-flex items-center gap-1 font-semibold text-primary underline underline-offset-2"
+        >
+          Política de Tratamiento de Datos
+        </button>
+        .
+      </p>
+
+      <Modal open={modalAbierto} onClose={() => setModalAbierto(false)} title="Política de Tratamiento de Datos">
+        <div className="flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-primary">
+          <ShieldCheck className="mt-0.5 size-4 shrink-0" />
+          <span>Ley 1581 de 2012 (Colombia) — Protección de Datos Personales.</span>
+        </div>
+        <p className="mt-4 max-h-[50vh] overflow-y-auto whitespace-pre-wrap text-sm leading-relaxed text-text">
+          {politicaDatos}
+        </p>
+        <Button className="mt-6 w-full" onClick={() => setModalAbierto(false)}>
+          Cerrar
+        </Button>
+      </Modal>
+    </div>
   );
 }

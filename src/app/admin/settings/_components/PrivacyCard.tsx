@@ -29,11 +29,13 @@ interface PrivacyCardProps {
   formatoPrivacidadTv: FormatoPrivacidadTv;
   modoAudioTv: ModoAudioTv;
   textoInformativoTv: string;
+  textoPoliticaDatos: string;
   onChange: (
     patch: Partial<{
       formato_privacidad_tv: FormatoPrivacidadTv;
       modo_audio_tv: ModoAudioTv;
       texto_informativo_tv: string;
+      texto_politica_datos: string;
     }>,
   ) => void;
 }
@@ -42,6 +44,7 @@ export function PrivacyCard({
   formatoPrivacidadTv,
   modoAudioTv,
   textoInformativoTv,
+  textoPoliticaDatos,
   onChange,
 }: PrivacyCardProps) {
   return (
@@ -92,6 +95,23 @@ export function PrivacyCard({
           rows={3}
           placeholder="Avisos para los pacientes, se muestran en el ticker inferior del TV. Use | para separar mensajes."
           className="w-full resize-y rounded-lg border border-border bg-surface-elevated px-4 py-3 text-sm text-text"
+        />
+      </label>
+
+      <label className="mt-6 block">
+        <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">
+          Política de Tratamiento de Datos (Check-In)
+        </span>
+        <p className="mb-2 text-xs text-muted">
+          Se muestra en el modal de consentimiento de Check-In (Ley 1581 de 2012). Reemplace los marcadores
+          [ENTRE CORCHETES] con los datos reales de su institución — recomendamos revisión de un abogado antes de
+          operar en producción.
+        </p>
+        <textarea
+          value={textoPoliticaDatos}
+          onChange={(e) => onChange({ texto_politica_datos: e.target.value })}
+          rows={8}
+          className="w-full resize-y rounded-lg border border-border bg-surface-elevated px-4 py-3 font-mono text-xs text-text"
         />
       </label>
     </Card>
