@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { createAdminClient } from '@/lib/supabase/admin';
 
 /**
@@ -24,6 +25,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase.rpc('fn_cerrar_jornada');
 
     if (error) {
+      Sentry.captureException(new Error(`fn_cerrar_jornada falló: ${error.message}`));
       return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     }
 
@@ -36,6 +38,7 @@ export async function GET(request: Request) {
     // Ej. SUPABASE_SERVICE_ROLE_KEY ausente/inválida: createAdminClient() lanza en vez de
     // devolver un `error` — se captura acá para que el cron siempre reciba JSON, no un 500
     // con stack trace HTML.
+    Sentry.captureException(err);
     const mensaje = err instanceof Error ? err.message : 'Error desconocido';
     return NextResponse.json({ ok: false, error: mensaje }, { status: 500 });
   }
