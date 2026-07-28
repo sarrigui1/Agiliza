@@ -45,7 +45,7 @@ CRON_SECRET=<string aleatorio largo>            # generar con: node -e "console.
 
 ## 4. Ejecutar las Migraciones SQL
 
-**Camino rápido (recomendado para un cliente nuevo):** abrir `supabase/bootstrap/agiliza_bootstrap_completo.sql`, copiar todo su contenido y pegarlo **una sola vez** en el SQL Editor de Supabase. Es la concatenación exacta de las 17 migraciones en orden — reemplaza el paso de correrlas una por una. Ese archivo se regenera automáticamente cada vez que se agrega una migración nueva (no editarlo a mano).
+**Camino rápido (recomendado para un cliente nuevo):** abrir `supabase/bootstrap/agiliza_bootstrap_completo.sql`, copiar todo su contenido y pegarlo **una sola vez** en el SQL Editor de Supabase. Es la concatenación exacta de todas las migraciones en orden — reemplaza el paso de correrlas una por una. No editar ese archivo a mano: cada vez que se agrega una migración nueva, correr `bash scripts/generar-bootstrap-sql.sh` para regenerarlo.
 
 **Camino manual (para depurar un problema puntual o entender qué hace cada pieza):** ejecutar los archivos de `supabase/migrations/` **en este orden exacto** — cada uno depende de que el anterior ya haya corrido:
 
@@ -68,6 +68,7 @@ CRON_SECRET=<string aleatorio largo>            # generar con: node -e "console.
 | 15 | `0015_lectura_cedula.sql` | Columna `permitir_lectura_cedula` (activa/desactiva el aviso y botón de escaneo de cédula en Check-In). |
 | 16 | `0016_tema_visual.sql` | Columna `tema_visual` (Oscuro/Claro, aplica a toda la app). |
 | 17 | `0017_texto_informativo_tv.sql` | Columna `texto_informativo_tv` (texto editable del ticker inferior del TV Display). |
+| 18 | `0018_habeas_data.sql` | Consentimiento de tratamiento de datos: columnas `acepto_tratamiento_datos`/`fecha_consentimiento_datos` en `turnos`, columna `texto_politica_datos` editable, y `fn_confirmar_checkin` actualizada para registrar el consentimiento. |
 
 > **Regla general para el futuro:** cualquier tabla nueva que deba ser leída por una pantalla pública sin sesión (`/display`, `/checkin`) necesita una política RLS explícita para el rol `anon` — no basta con crear la tabla y confiar en el comportamiento por defecto. Ver la sección de Troubleshooting más abajo.
 
@@ -141,7 +142,10 @@ Ya con el administrador logueado en producción, antes de dar el sistema por ope
 
 ## 10. Aplicar Migraciones Futuras
 
-Cada vez que el repositorio incorpore una migración nueva (`00NN_descripcion.sql`), ejecutarla **una sola vez** en el SQL Editor de Supabase, en orden, antes o después de desplegar el código que la usa (el código siempre está escrito para degradar de forma segura si la columna/tabla todavía no existe — pero la funcionalidad nueva no queda activa hasta correr la migración).
+Cada vez que el repositorio incorpore una migración nueva (`00NN_descripcion.sql`):
+
+1. Ejecutarla **una sola vez** en el SQL Editor de Supabase de cada cliente ya desplegado, en orden, antes o después de desplegar el código que la usa (el código siempre está escrito para degradar de forma segura si la columna/tabla todavía no existe — pero la funcionalidad nueva no queda activa hasta correr la migración).
+2. Correr `bash scripts/generar-bootstrap-sql.sh` para que `supabase/bootstrap/agiliza_bootstrap_completo.sql` quede al día para el próximo cliente nuevo, y hacer commit del archivo regenerado.
 
 ---
 

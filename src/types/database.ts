@@ -156,6 +156,7 @@ export interface Database {
           permitir_citas_programadas: boolean;
           permitir_lectura_cedula: boolean;
           tema_visual: TemaVisual;
+          texto_politica_datos: string;
           intercalado_preferencial: number;
           intercalado_normal: number;
           updated_at: string;
@@ -179,6 +180,8 @@ export interface Database {
           estado: EstadoTurno;
           documento_paciente: string;
           nombre_paciente: string;
+          acepto_tratamiento_datos: boolean;
+          fecha_consentimiento_datos: string | null;
           hora_cita: string | null;
           hora_llegada: string;
           punto_atencion_id: string | null;
@@ -201,6 +204,8 @@ export interface Database {
           estado?: EstadoTurno;
           documento_paciente: string;
           nombre_paciente: string;
+          acepto_tratamiento_datos?: boolean;
+          fecha_consentimiento_datos?: string | null;
           hora_cita?: string | null;
           hora_llegada?: string;
           punto_atencion_id?: string | null;

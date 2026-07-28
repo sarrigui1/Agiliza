@@ -23,6 +23,8 @@ Para salir, use el botón **Cerrar Sesión** que aparece en la parte superior de
 
 Si el administrador activó **"Lectura de Cédula"** en Configuración, aparece además un aviso para acercar la cédula a un lector físico USB/Bluetooth (si el sitio tiene uno) o un botón para escanearla con la cámara — al leerla, autocompleta el documento (y el nombre, en turno espontáneo) sin necesidad de digitarlo a mano.
 
+Antes de generar el ticket o confirmar una cita, el paciente debe marcar la casilla de **consentimiento de tratamiento de datos** (puede leer el texto completo tocando el enlace) — el botón de confirmar/generar ticket queda deshabilitado hasta que se marca.
+
 Lo que se ve en esta pantalla depende de si el administrador activó el **Módulo de Citas Programadas** en Configuración:
 
 ### A. Si el módulo de Citas Programadas está activado
@@ -103,6 +105,7 @@ Reglas de negocio globales del sistema:
   - Cómo se muestra la identidad del paciente en la pantalla pública — solo el código del ticket, iniciales + documento parcial, o nombre completo.
   - **Audio de Sala:** Solo Tono/Chime, Solo Voz (anuncio hablado), o Tono + Voz (por defecto) para lo que suena en el TV al llamar un turno.
   - **Texto Informativo (TV):** el mensaje del ticker que se desplaza en la parte inferior del TV Display — editable libremente, use `|` para separar varios avisos.
+  - **Política de Tratamiento de Datos (Check-In):** el texto legal que ve el paciente al tocar el enlace de consentimiento antes de generar su ticket. Trae una plantilla por defecto con marcadores `[ENTRE CORCHETES]` (nombre de la institución, NIT, correo de contacto) — reemplácelos con los datos reales de la sede, idealmente con revisión de un abogado, antes de operar con pacientes reales.
 - **Apariencia:** Oscuro (por defecto, alto contraste para TVs/tótems) o Claro (fondos blancos, para oficinas con mucha luz). Aplica a todas las pantallas del sistema por igual — es una preferencia de la sede, no de cada usuario.
 
 Después de cualquier cambio, presionar **Guardar Cambios**.
