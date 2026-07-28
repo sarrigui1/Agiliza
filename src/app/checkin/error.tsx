@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { WifiOff } from 'lucide-react';
+import * as Sentry from '@sentry/nextjs';
 import { Button } from '@/components/ui/Button';
 
 /**
@@ -13,7 +14,7 @@ import { Button } from '@/components/ui/Button';
  */
 export default function CheckinError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
-    console.error('[checkin] error de render:', error);
+    Sentry.captureException(error);
   }, [error]);
 
   return (

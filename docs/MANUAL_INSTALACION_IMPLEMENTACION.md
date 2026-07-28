@@ -49,6 +49,11 @@ NEXT_PUBLIC_SITE_URL=<dominio público, para que Twilio confirme el estado de en
 
 **Sobre el número de WhatsApp:** una cuenta Twilio nueva/Trial no puede enviar por WhatsApp con cualquier número de teléfono — el número tiene que estar habilitado como canal de WhatsApp. Para probar rápido sin trámites: Twilio Console → Messaging → Try it out → Send a WhatsApp message, te da un número de Sandbox (normalmente `+14155238886`); cada destinatario de prueba debe primero enviarle "join &lt;código&gt;" a ese número desde su WhatsApp antes de poder recibir mensajes. Para producción real, el número debe pasar por el proceso de aprobación de WhatsApp Business dentro de Twilio (verificación de negocio vía Meta, toma más tiempo).
 
+```
+# Opcional — monitoreo de errores (recomendado, ver Sección 15)
+NEXT_PUBLIC_SENTRY_DSN=<DSN del proyecto en sentry.io>
+```
+
 ---
 
 ## 4. Ejecutar las Migraciones SQL
@@ -252,3 +257,33 @@ npx supabase stop    # opcional, apaga los contenedores cuando termines
 Cada test corre dentro de una transacción `BEGIN`/`ROLLBACK` (ver `test/rpc/setup.ts`) — no ensucian los datos de `seed.sql` ni se pisan entre sí. Se conectan directo a Postgres (no vía PostgREST), porque lo que se prueba es la lógica SQL de las funciones en sí — la capa de autorización de PostgREST/RLS ya la ejerce el resto de la aplicación en producción.
 
 `npx supabase start` también sirve como verificación independiente de que las migraciones (`supabase/bootstrap/agiliza_bootstrap_completo.sql` incluido) aplican limpio en orden — si algo se rompe ahí, se rompería igual en un proyecto Supabase nuevo.
+
+---
+
+## 15. Observabilidad
+
+Sin esto, un error en producción se descubre cuando el cliente llama molesto, no antes. Con 1 cliente es tolerable; con varios, no.
+
+### 15.1 Monitoreo de errores (Sentry)
+
+`@sentry/nextjs` ya está integrado en el código (cliente, servidor, edge, y los `error.tsx` de cada ruta) — solo falta la cuenta:
+
+1. Crear cuenta gratuita en [sentry.io](https://sentry.io) (tier gratuito: 5.000 errores/mes, alcanza sobrado para el volumen de este sistema).
+2. Crear un proyecto, eligiendo **Next.js** como plataforma/SDK.
+3. Copiar el DSN que te da (`https://xxxx@oXXXXXX.ingest.us.sentry.io/XXXXXX`) a la variable `NEXT_PUBLIC_SENTRY_DSN` — en `.env.local` para desarrollo local, y en **Vercel → Settings → Environment Variables** para producción (con **Redeploy** después, igual que con las demás variables de entorno).
+4. Sin esa variable configurada, el SDK queda inerte — no rompe nada, simplemente no envía nada. Es seguro dejarla vacía en un ambiente que todavía no la necesita.
+
+**A propósito NO se activó Session Replay** (grabación de sesión): la pantalla de Check-In muestra nombre/documento/teléfono del paciente, y grabar eso por defecto sería un riesgo de privacidad innecesario para lo que se busca (saber que algo se rompió, no grabar sesiones). Si en el futuro hace falta, debe activarse con enmascarado explícito de esos campos, no por defecto — ver el comentario en `src/instrumentation-client.ts`.
+
+**Qué queda cubierto:** errores de render en cualquier pantalla (vía los `error.tsx` de cada ruta + `global-error.tsx` como última red), y errores no controlados en Server Actions / Route Handlers (cron de cierre de jornada, webhook de estado de Twilio) — capturados explícitamente en sus bloques `catch`.
+
+**Qué NO está cubierto todavía:** tracing de performance (`tracesSampleRate` está en 0 a propósito, para no sumar complejidad ni costo hasta que haga falta) y subida de source maps (requiere `SENTRY_AUTH_TOKEN` + org/project slugs, que no están configurados — sin eso, los stack traces en Sentry se ven minificados en vez de con el código fuente original; es una mejora de seguimiento, no bloqueante).
+
+### 15.2 Monitoreo de uptime (sin cambios de código)
+
+No requiere ninguna integración en el proyecto — es un servicio externo que hace ping periódico a la URL pública y avisa si deja de responder. Recomendado (cualquiera de los dos, plan gratuito alcanza):
+
+- **[UptimeRobot](https://uptimerobot.com)** — monitor HTTP(S) cada 5 min en el plan gratuito, apuntando a `https://<dominio-del-cliente>/login` (una ruta pública que siempre debe responder 200).
+- **[Better Uptime](https://betterstack.com/uptime)** — similar, con página de estado pública opcional para mostrarle al cliente.
+
+Configurar uno por cada dominio de cliente en producción — 5 minutos de setup por sitio, sin tocar el código de Agiliza.

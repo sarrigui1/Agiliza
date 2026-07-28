@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import * as Sentry from '@sentry/nextjs';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { verificarFirmaTwilio } from '@/lib/notifications/twilioSignature';
 import type { EstadoNotificacion } from '@/types/database';
@@ -62,6 +63,7 @@ export async function POST(request: Request) {
       .eq('twilio_message_sid', sid);
 
     if (error) {
+      Sentry.captureException(new Error(`Webhook Twilio: fallo al actualizar notificaciones_log: ${error.message}`));
       return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
     }
 
@@ -70,6 +72,7 @@ export async function POST(request: Request) {
     // Ej. SUPABASE_SERVICE_ROLE_KEY ausente/inválida: createAdminClient() lanza en vez de
     // devolver un `error` — se captura acá para que el webhook siempre reciba JSON (Twilio
     // reintenta status callbacks fallidos, así que un 500 con JSON es preferible a un crash).
+    Sentry.captureException(err);
     const mensaje = err instanceof Error ? err.message : 'Error desconocido';
     return NextResponse.json({ ok: false, error: mensaje }, { status: 500 });
   }

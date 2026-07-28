@@ -12,6 +12,7 @@
     "test:rpc": "vitest run test/rpc"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.68.0",
     "@supabase/ssr": "^0.12.3",
     "@supabase/supabase-js": "^2.110.8",
     "@zxing/browser": "^0.2.1",
