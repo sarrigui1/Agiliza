@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Generado por `supabase start` (Edge Runtime bundle) — no es código del proyecto,
+    // y ya está en supabase/.gitignore, pero ESLint no lo respeta automáticamente.
+    "supabase/.temp/**",
+    "supabase/.branches/**",
   ]),
 ]);
 

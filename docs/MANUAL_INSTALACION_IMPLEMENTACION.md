@@ -221,3 +221,34 @@ Para un cliente nuevo, en orden:
 - [ ] Desplegar en Vercel + variables de entorno + cron (Sección 8).
 - [ ] Recorrer la checklist de configuración inicial dentro de la app (Sección 9).
 - [ ] Registrar el dominio del cliente (ver flujo de dominios `.com.co` ya usado para Agiliza) y apuntarlo al deployment de Vercel.
+
+---
+
+## 14. Pruebas Automatizadas
+
+Dos suites, con requisitos distintos:
+
+### 14.1 Tests unitarios (`npm test`)
+
+Lógica TypeScript pura sin dependencias externas — corren en cualquier máquina, sin Docker ni Supabase:
+
+```bash
+npm test          # una vez
+npm run test:watch # modo watch, útil mientras se edita
+```
+
+Cubren: `parseCedulaColombiana` (parser del PDF417), `dateRanges` (aritmética de zona horaria Colombia UTC-5 — la clase de bug más sutil y ya vista en este proyecto), `formatearTelefonoE164` y `verificarFirmaTwilio` (firma HMAC del webhook de WhatsApp).
+
+### 14.2 Tests de integración de RPCs (`npm run test:rpc`)
+
+Corren las RPCs críticas del ciclo de vida del turno (`fn_llamar_siguiente_turno`, `fn_confirmar_checkin`, `fn_iniciar_atencion`, `fn_finalizar_atencion`, `fn_cerrar_jornada`) contra una instancia **real** de Postgres local — no un mock. Requieren [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado y corriendo, y el CLI de Supabase (se descarga solo vía `npx`, no hace falta instalarlo global).
+
+```bash
+npx supabase start   # levanta Postgres + Auth + PostgREST local (Docker) y corre las 19 migraciones
+npm run test:rpc
+npx supabase stop    # opcional, apaga los contenedores cuando termines
+```
+
+Cada test corre dentro de una transacción `BEGIN`/`ROLLBACK` (ver `test/rpc/setup.ts`) — no ensucian los datos de `seed.sql` ni se pisan entre sí. Se conectan directo a Postgres (no vía PostgREST), porque lo que se prueba es la lógica SQL de las funciones en sí — la capa de autorización de PostgREST/RLS ya la ejerce el resto de la aplicación en producción.
+
+`npx supabase start` también sirve como verificación independiente de que las migraciones (`supabase/bootstrap/agiliza_bootstrap_completo.sql` incluido) aplican limpio en orden — si algo se rompe ahí, se rompería igual en un proyecto Supabase nuevo.
