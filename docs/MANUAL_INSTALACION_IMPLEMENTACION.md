@@ -45,7 +45,9 @@ CRON_SECRET=<string aleatorio largo>            # generar con: node -e "console.
 
 ## 4. Ejecutar las Migraciones SQL
 
-En el **SQL Editor** de Supabase (o vía `supabase db push` si el proyecto está enlazado con la CLI), ejecutar los archivos de `supabase/migrations/` **en este orden exacto** — cada uno depende de que el anterior ya haya corrido:
+**Camino rápido (recomendado para un cliente nuevo):** abrir `supabase/bootstrap/agiliza_bootstrap_completo.sql`, copiar todo su contenido y pegarlo **una sola vez** en el SQL Editor de Supabase. Es la concatenación exacta de las 17 migraciones en orden — reemplaza el paso de correrlas una por una. Ese archivo se regenera automáticamente cada vez que se agrega una migración nueva (no editarlo a mano).
+
+**Camino manual (para depurar un problema puntual o entender qué hace cada pieza):** ejecutar los archivos de `supabase/migrations/` **en este orden exacto** — cada uno depende de que el anterior ya haya corrido:
 
 | # | Archivo | Qué hace |
 |---|---|---|
@@ -73,7 +75,9 @@ En el **SQL Editor** de Supabase (o vía `supabase db push` si el proyecto está
 
 ## 5. Cargar Datos Base (Catálogo de Ejemplo)
 
-Ejecutar `supabase/seed.sql` en el SQL Editor. Crea zonas, especialidades y puntos de atención de ejemplo — editables después desde `/admin/infraestructura`. Es opcional pero recomendado para no arrancar con el sistema completamente vacío.
+Ejecutar `supabase/seed.sql` en el SQL Editor. Crea zonas, especialidades y puntos de atención de ejemplo — editables después desde `/admin/infraestructura`. Es opcional y pensado para **demos y ambientes de prueba**.
+
+> ⚠️ **Para un cliente en producción, no lo corras tal cual.** `seed.sql` también inserta 5 turnos ficticios (`Paciente de Prueba Uno`, etc.) para poder probar `/workspace` y `/display` sin pasar por Check-In — esos turnos de juguete no deben quedar visibles en el TV real de un cliente. Si lo usas como punto de partida para cargar zonas/especialidades/puntos de atención reales, borra manualmente los `insert into public.turnos` de prueba antes de darlo por operativo (o simplemente elimínalos después desde `/admin/supervisor`).
 
 ---
 
@@ -182,5 +186,22 @@ src/
 
 supabase/
 ├── migrations/               # 0001..0017, en orden estricto
+├── bootstrap/                # agiliza_bootstrap_completo.sql — las 17 migraciones concatenadas, para setup en un paso
 ├── seed.sql, seed_perfiles.template.sql
 ```
+
+---
+
+## 13. Checklist de Onboarding — Resumen de un Vistazo
+
+Para un cliente nuevo, en orden:
+
+- [ ] Crear proyecto Supabase + anotar credenciales (Sección 2).
+- [ ] `git clone` + `npm install` + `.env.local` (Sección 3).
+- [ ] Pegar `supabase/bootstrap/agiliza_bootstrap_completo.sql` una vez en el SQL Editor (Sección 4).
+- [ ] Cargar catálogo real (zonas/especialidades/puntos de atención) — a mano desde `/admin/infraestructura` una vez desplegado, o adaptando `seed.sql` sin los turnos de prueba (Sección 5).
+- [ ] Crear el primer usuario administrador (Sección 6).
+- [ ] Verificar en local con `npm run dev` (Sección 7).
+- [ ] Desplegar en Vercel + variables de entorno + cron (Sección 8).
+- [ ] Recorrer la checklist de configuración inicial dentro de la app (Sección 9).
+- [ ] Registrar el dominio del cliente (ver flujo de dominios `.com.co` ya usado para Agiliza) y apuntarlo al deployment de Vercel.
