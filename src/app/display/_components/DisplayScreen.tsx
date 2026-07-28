@@ -1,9 +1,11 @@
 'use client';
 
-import { Volume2, History, MapPin } from 'lucide-react';
+import { Volume2, History, MapPin, WifiOff } from 'lucide-react';
 import { useRealtimeCalls } from '@/hooks/useRealtimeCalls';
 import { useTicketAudio } from '@/hooks/useTicketAudio';
 import { useClock } from '@/hooks/useClock';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useTick } from '@/hooks/useTick';
 import { useEffect } from 'react';
 import type { Llamado, ModoAudioTv, Zona } from '@/types/database';
 import { cn } from '@/lib/utils';
@@ -16,10 +18,34 @@ interface DisplayScreenProps {
   textoInformativo: string;
 }
 
+/** A partir de cuánto tiempo sin confirmar conexión se avisa que los datos pueden estar desactualizados. */
+const UMBRAL_DATOS_DESACTUALIZADOS_MS = 3 * 60_000;
+
+/**
+ * `Date.now()` es impuro, así que se llama desde funciones aparte invocadas en JSX (mismo
+ * patrón que `minutosDesde` en lib/utils.ts) en vez de en el cuerpo del componente — ahí
+ * lo marca `react-hooks/purity` porque el resultado dependería de CUÁNDO se ejecuta el
+ * render, no solo de las props/estado.
+ */
+function sonDatosDesactualizados(ultimaActualizacion: number): boolean {
+  return Date.now() - ultimaActualizacion > UMBRAL_DATOS_DESACTUALIZADOS_MS;
+}
+
+function formatearMinutosTranscurridos(desde: number): string {
+  const minutos = Math.floor((Date.now() - desde) / 60_000);
+  if (minutos < 1) return 'hace menos de 1 min';
+  return `hace ${minutos} min`;
+}
+
 export function DisplayScreen({ zona, initialCalls, modoAudio, textoInformativo }: DisplayScreenProps) {
-  const { calls, onNuevoLlamado } = useRealtimeCalls(zona.id, initialCalls);
+  const { calls, onNuevoLlamado, estadoConexion, ultimaActualizacion } = useRealtimeCalls(zona.id, initialCalls);
   const { habilitado, habilitar, anunciar } = useTicketAudio(modoAudio);
   const { hora, fecha } = useClock();
+  const enLinea = useNetworkStatus();
+  useTick(15_000); // re-renderiza cada 15s para mantener "hace X min" fresco en el aviso de abajo
+
+  const sinConexion = !enLinea || estadoConexion === 'reconectando';
+  const datosDesactualizados = sinConexion && sonDatosDesactualizados(ultimaActualizacion);
 
   useEffect(() => {
     onNuevoLlamado((llamado) => anunciar(llamado.etiqueta_publica, llamado.etiqueta_punto_atencion));
@@ -58,11 +84,25 @@ export function DisplayScreen({ zona, initialCalls, modoAudio, textoInformativo 
 
       <header className="flex items-center justify-between border-b border-border px-16 py-6">
         <p className="font-mono text-xl font-bold tracking-widest text-primary">AGILIZA</p>
-        <p className="flex items-center gap-2 font-mono text-sm text-primary">
-          <span className="size-2 rounded-full bg-primary animate-pulse" />
-          REALTIME SYNC
-        </p>
+        {sinConexion ? (
+          <p className="flex items-center gap-2 font-mono text-sm text-warning">
+            <WifiOff className="size-4" />
+            RECONECTANDO
+          </p>
+        ) : (
+          <p className="flex items-center gap-2 font-mono text-sm text-primary">
+            <span className="size-2 rounded-full bg-primary animate-pulse" />
+            REALTIME SYNC
+          </p>
+        )}
       </header>
+
+      {datosDesactualizados && (
+        <div className="flex items-center justify-center gap-2 border-b border-warning/40 bg-warning/10 px-6 py-2 font-mono text-sm text-warning">
+          <WifiOff className="size-4 shrink-0" />
+          Sin conexión — mostrando la última actualización conocida ({formatearMinutosTranscurridos(ultimaActualizacion)})
+        </div>
+      )}
 
       <div className="grid flex-1 grid-cols-[3fr_2fr] overflow-hidden">
         {/* Hero: turno actual */}
