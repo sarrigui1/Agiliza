@@ -39,7 +39,15 @@ NEXT_PUBLIC_SUPABASE_URL=https://<tu-proyecto>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon / publishable key>
 SUPABASE_SERVICE_ROLE_KEY=<service_role key>   # solo servidor, nunca exponer
 CRON_SECRET=<string aleatorio largo>            # generar con: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+# Opcional — solo si vas a usar el motor de notificaciones WhatsApp (/admin/notificaciones)
+TWILIO_ACCOUNT_SID=<Account SID de Twilio>
+TWILIO_AUTH_TOKEN=<Auth Token de Twilio>
+TWILIO_WHATSAPP_NUMBER=<número habilitado como canal de WhatsApp, ej. +14155238886 en Sandbox>
+NEXT_PUBLIC_SITE_URL=<dominio público, para que Twilio confirme el estado de entrega>
 ```
+
+**Sobre el número de WhatsApp:** una cuenta Twilio nueva/Trial no puede enviar por WhatsApp con cualquier número de teléfono — el número tiene que estar habilitado como canal de WhatsApp. Para probar rápido sin trámites: Twilio Console → Messaging → Try it out → Send a WhatsApp message, te da un número de Sandbox (normalmente `+14155238886`); cada destinatario de prueba debe primero enviarle "join &lt;código&gt;" a ese número desde su WhatsApp antes de poder recibir mensajes. Para producción real, el número debe pasar por el proceso de aprobación de WhatsApp Business dentro de Twilio (verificación de negocio vía Meta, toma más tiempo).
 
 ---
 
@@ -69,6 +77,7 @@ CRON_SECRET=<string aleatorio largo>            # generar con: node -e "console.
 | 16 | `0016_tema_visual.sql` | Columna `tema_visual` (Oscuro/Claro, aplica a toda la app). |
 | 17 | `0017_texto_informativo_tv.sql` | Columna `texto_informativo_tv` (texto editable del ticker inferior del TV Display). |
 | 18 | `0018_habeas_data.sql` | Consentimiento de tratamiento de datos: columnas `acepto_tratamiento_datos`/`fecha_consentimiento_datos` en `turnos`, columna `texto_politica_datos` editable, y `fn_confirmar_checkin` actualizada para registrar el consentimiento. |
+| 19 | `0019_whatsapp_notificaciones.sql` | Motor de notificaciones WhatsApp: columna `telefono_paciente` en `turnos`, tablas `notificaciones_configuracion` (switch maestro + toggles + costeo) y `notificaciones_log` (bitácora/costos). |
 
 > **Regla general para el futuro:** cualquier tabla nueva que deba ser leída por una pantalla pública sin sesión (`/display`, `/checkin`) necesita una política RLS explícita para el rol `anon` — no basta con crear la tabla y confiar en el comportamiento por defecto. Ver la sección de Troubleshooting más abajo.
 
@@ -137,6 +146,7 @@ Ya con el administrador logueado en producción, antes de dar el sistema por ope
   - Privacidad en TV (cómo se muestra la identidad del paciente) y **Audio de Sala** (Tono / Voz / Tono + Voz).
 - [ ] **Dispositivo de `/checkin`** — iniciar sesión una sola vez en ese navegador/tótem con una cuenta de rol `recepcion` (ver Troubleshooting: "Sesión no válida para registrar el turno").
 - [ ] **Dispositivo de `/display?zone=<código>`** — abrir la URL con el código de zona real; si es un TV controlado por control remoto (sin touch), presionar cualquier tecla del remoto una vez para activar el audio.
+- [ ] **`/admin/notificaciones`** (opcional) — si el cliente va a usar avisos por WhatsApp, configurar las variables `TWILIO_*` (ver Sección 3), enviar un mensaje de prueba desde esa pantalla, y solo entonces activar el interruptor maestro y los toggles de evento que aplique.
 
 ---
 
@@ -173,10 +183,11 @@ Generar el nuevo valor, actualizarlo en Vercel → Environment Variables, y hace
 ```
 src/
 ├── app/                    # Rutas (App Router)
-│   ├── admin/              # settings, supervisor, infraestructura, dashboard, reportes, citas, usuarios
+│   ├── admin/              # settings, supervisor, infraestructura, dashboard, reportes, citas, usuarios, notificaciones
 │   ├── api/cron/           # Route Handler del cierre de jornada
+│   ├── api/webhooks/twilio/ # Route Handler de estado de entrega de WhatsApp
 │   ├── checkin/, display/, workspace/, login/
-├── actions/                # Server Actions (checkin, citas, workspace, settings, infrastructure, analytics, reports, usuarios)
+├── actions/                # Server Actions (checkin, citas, workspace, settings, infrastructure, analytics, reports, usuarios, notifications)
 ├── components/
 │   ├── ui/                 # Button, Card, Modal, Badge, Toggle, RadioCard, NumericKeypad
 │   ├── charts/              # StatTile, TrendBarChart, DemandHeatmap
@@ -184,13 +195,14 @@ src/
 ├── hooks/                  # useRealtimeTurnos, useRealtimeCalls, useClock, useElapsedTime, useTicketAudio, useTick
 ├── lib/
 │   ├── supabase/            # client.ts, server.ts, admin.ts
+│   ├── notifications/       # twilioWhatsApp.ts, dispatch.ts, templates.ts, phone.ts, twilioSignature.ts
 │   ├── voiceMessage.ts, autoFitText.ts, dateRanges.ts, utils.ts
 ├── types/                   # database.ts (tipos generados a mano), domain.ts
 └── proxy.ts                 # Control de acceso por rol (ex-middleware.ts)
 
 supabase/
-├── migrations/               # 0001..0017, en orden estricto
-├── bootstrap/                # agiliza_bootstrap_completo.sql — las 17 migraciones concatenadas, para setup en un paso
+├── migrations/               # 0001..0019, en orden estricto
+├── bootstrap/                # agiliza_bootstrap_completo.sql — todas las migraciones concatenadas, para setup en un paso
 ├── seed.sql, seed_perfiles.template.sql
 ```
 

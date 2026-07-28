@@ -44,7 +44,7 @@ Aparecen dos opciones al entrar:
 
 La pantalla entra directo al formulario de registro, sin preguntar nada:
 
-1. Completar: **Nombre completo**, **Documento**, **Especialidad**, **Zona**.
+1. Completar: **Nombre completo**, **Documento**, **Teléfono (WhatsApp, opcional)**, **Especialidad**, **Zona**. El teléfono solo se usa si el administrador activó el motor de notificaciones — dejarlo vacío no bloquea el registro del turno.
 2. Si corresponde (adultos mayores, embarazadas, discapacidad), activar el interruptor **"Turno preferencial (Ley)"** — esto le da prioridad en la cola según la configuración del sistema.
 3. Tocar **Generar Ticket**.
 4. Se muestra el código asignado en pantalla grande, junto con el tiempo estimado de espera (o "Eres el siguiente en la fila" si no hay nadie más adelante).
@@ -89,7 +89,7 @@ Muestra, en tiempo real: cuántos turnos se han atendido hoy, el tiempo promedio
 
 ## 3. Rol: Administrador
 
-El administrador tiene acceso a las 7 secciones del menú superior. Al iniciar sesión, aterriza en **Configuración**.
+El administrador tiene acceso a las 8 secciones del menú superior. Al iniciar sesión, aterriza en **Configuración**.
 
 ### 3.1 Configuración (`/admin/settings`)
 
@@ -163,11 +163,25 @@ A diferencia del resto de secciones, **esta pantalla no la ve el rol Supervisor*
 - **Contraseña:** botón para asignarle una nueva contraseña a un usuario (por ejemplo, si la olvidó).
 - Por seguridad, un administrador no puede desactivarse ni quitarse su propio rol de administrador desde aquí — evita quedar todos bloqueados sin nadie que revierta el cambio.
 
+### 3.8 Notificaciones WhatsApp (`/admin/notificaciones`)
+
+Motor de avisos por WhatsApp al paciente, vía Twilio. Apagado por defecto — no requiere configurarlo para usar el resto del sistema.
+
+- **Interruptor Maestro:** apaga o prende todo el motor de un solo toque. Con esto apagado, ningún evento envía nada aunque sus toggles individuales estén activos.
+- **Eventos:**
+  - **Check-in exitoso** y **Llamado al módulo** están conectados: si el paciente dejó un teléfono en Check-In, recibe un WhatsApp al generar el ticket y otro cuando el agente lo llama.
+  - **Aviso previo**, **Recordatorio de cita** y **Encuesta post-atención** aparecen en pantalla para dejar la configuración lista, pero todavía no disparan ningún mensaje (quedan marcados como pendientes de implementar).
+- **Costeo y Umbrales:** costo estimado por sesión (USD) y la TRM (COP por USD) usados para calcular el costo de cada envío en el reporte — son valores de referencia que usted actualiza manualmente, no una consulta en vivo.
+- **Probar Conexión con Twilio:** envía un mensaje de prueba a un número que usted indique, sin pasar por los toggles de eventos — útil para confirmar que las credenciales de Twilio configuradas en el servidor funcionan antes de activar el interruptor maestro.
+- **Reporte de Costos:** mensajes enviados, fallidos y costo total (USD/COP) de los últimos 30 días, desglosado por tipo de evento.
+
+> Requiere que un administrador técnico haya configurado las variables `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` y `TWILIO_WHATSAPP_NUMBER` en el servidor (ver manual de instalación) — sin esas variables, "Probar Conexión" y los envíos reales fallan con un mensaje de error, pero el resto del sistema sigue funcionando con normalidad.
+
 ---
 
 ## 4. Rol: Supervisor
 
-El supervisor tiene el mismo acceso que el administrador a **Configuración**, **Infraestructura**, **Citas del Día**, **Supervisión**, **Dashboard** y **Reportes** — pero **no** a **Roles y Usuarios** (solo el rol Administrador gestiona credenciales). Al iniciar sesión, aterriza directamente en **Supervisión Operativa** (a diferencia del administrador, que aterriza en Configuración). El uso de cada pantalla es idéntico al descrito en la sección de Administrador.
+El supervisor tiene el mismo acceso que el administrador a **Configuración**, **Infraestructura**, **Citas del Día**, **Supervisión**, **Dashboard**, **Reportes** y **Notificaciones WhatsApp** — pero **no** a **Roles y Usuarios** (solo el rol Administrador gestiona credenciales). En Notificaciones, el supervisor puede ver la configuración y el reporte de costos, pero solo un Administrador puede guardar cambios o enviar un mensaje de prueba. Al iniciar sesión, aterriza directamente en **Supervisión Operativa** (a diferencia del administrador, que aterriza en Configuración). El uso de cada pantalla es idéntico al descrito en la sección de Administrador.
 
 ---
 

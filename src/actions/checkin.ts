@@ -1,10 +1,13 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { rangoHoyColombia } from '@/lib/dateRanges';
 import { ok, fail, type ActionResult, type CitaEncontrada, type TurnoConEstimado } from '@/types/domain';
 import type { Turno } from '@/types/database';
+import { dispararNotificacion } from '@/lib/notifications/dispatch';
+import { mensajeCheckinExitoso } from '@/lib/notifications/templates';
 
 /**
  * MÓDULO 2 — Admisión y Check-In.
@@ -172,6 +175,7 @@ export async function confirmarCheckIn(
 export interface CrearTurnoEspontaneoInput {
   documento: string;
   nombre: string;
+  telefono?: string;
   especialidadId: string;
   zonaId: string;
   esPreferencial?: boolean;
@@ -225,6 +229,7 @@ export async function crearTurnoEspontaneo(
       estado: 'en_espera',
       documento_paciente: documento,
       nombre_paciente: nombre,
+      telefono_paciente: input.telefono?.trim() || null,
       acepto_tratamiento_datos: true,
       fecha_consentimiento_datos: new Date().toISOString(),
       hora_llegada: new Date().toISOString(),
@@ -238,7 +243,20 @@ export async function crearTurnoEspontaneo(
   }
 
   const tiempoEstimadoMinutos = await calcularTiempoEstimado(supabase, input.especialidadId, input.zonaId);
+  const turnoCreado = turno as Turno;
+
+  // Se dispara después de responder al tótem (after()) para no sumarle a la latencia del
+  // check-in la ida y vuelta a la API de Twilio; el interceptor se apaga solo si el switch
+  // maestro o el toggle del evento están desactivados (por defecto, ambos lo están).
+  after(() =>
+    dispararNotificacion({
+      turnoId: turnoCreado.id,
+      telefono: turnoCreado.telefono_paciente,
+      tipoEvento: 'checkin_exitoso',
+      mensaje: mensajeCheckinExitoso(turnoCreado.nombre_paciente, turnoCreado.codigo, tiempoEstimadoMinutos),
+    }),
+  );
 
   revalidatePath('/checkin');
-  return ok({ ...(turno as Turno), tiempoEstimadoMinutos });
+  return ok({ ...turnoCreado, tiempoEstimadoMinutos });
 }

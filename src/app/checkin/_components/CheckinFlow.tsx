@@ -360,6 +360,7 @@ function EspontaneoForm({
   const [especialidadId, setEspecialidadId] = useState(especialidades[0]?.id ?? '');
   const [zonaId, setZonaId] = useState(zonas[0]?.id ?? '');
   const [preferencial, setPreferencial] = useState(false);
+  const [telefono, setTelefono] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -369,6 +370,7 @@ function EspontaneoForm({
       const res = await crearTurnoEspontaneo({
         nombre,
         documento,
+        telefono,
         especialidadId,
         zonaId,
         esPreferencial: preferencial,
@@ -406,6 +408,15 @@ function EspontaneoForm({
             className="w-full rounded-lg border border-border bg-surface-elevated px-4 py-3 text-text"
             placeholder="1020304050"
             inputMode="numeric"
+          />
+        </Campo>
+        <Campo label="Teléfono (WhatsApp, opcional)">
+          <input
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value.replace(/[^\d+]/g, ''))}
+            className="w-full rounded-lg border border-border bg-surface-elevated px-4 py-3 text-text"
+            placeholder="3001234567"
+            inputMode="tel"
           />
         </Campo>
         <Campo label="Especialidad">
