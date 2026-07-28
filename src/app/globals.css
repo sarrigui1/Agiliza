@@ -2,8 +2,10 @@
 
 /*
  * Design system "Kinetic Neon Enterprise" (ver stitch_smart_queue_tv_display/.../DESIGN.md)
- * Paleta fija oscura — esta aplicación no tiene modo claro, está pensada para displays
- * de alto contraste (TVs, tótems, paneles operativos 24/7).
+ * Paleta oscura por defecto — pensada para displays de alto contraste (TVs, tótems,
+ * paneles operativos 24/7). Todos los componentes usan estos tokens semánticos
+ * (bg-surface, text-muted, etc.), nunca hex directo, así que el modo claro de abajo
+ * cubre toda la app con solo redefinir las variables — cero cambios por componente.
  */
 @theme {
   --color-bg: #0c1324;
@@ -28,6 +30,43 @@
 
   --font-sans: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
+}
+
+/*
+ * Modo claro — activado por `<html data-theme="claro">`, fijado por el admin en
+ * /admin/settings (`configuraciones_globales.tema_visual`), no por el navegador del
+ * usuario. El verde/cian neón del modo oscuro no es legible sobre blanco, así que acá
+ * se recalibran a tonos más oscuros y saturados de la misma familia de color en vez de
+ * invertir la paleta — mantiene la identidad de marca sin romper contraste.
+ */
+:root[data-theme='claro'] {
+  --color-bg: #f4f6fb;
+  --color-surface: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-surface-high: #edf0f7;
+  --color-border: #dde2ec;
+  --color-border-strong: #c5cce0;
+
+  --color-primary: #0f7b3e;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #0a7f93;
+  --color-secondary-foreground: #ffffff;
+
+  --color-text: #10172a;
+  --color-muted: #5b6478;
+
+  --color-danger: #d1234a;
+  --color-danger-foreground: #ffffff;
+  --color-warning: #a85b09;
+  --color-warning-foreground: #ffffff;
+}
+
+/* El resplandor neón es un efecto de modo oscuro — sobre fondo claro se ve como una
+   mancha de color en vez de un brillo, así que se atenúa mucho en vez de quitarse
+   del todo (los componentes lo aplican incondicionalmente vía clase). */
+:root[data-theme='claro'] .glow-primary,
+:root[data-theme='claro'] .glow-secondary {
+  box-shadow: none;
 }
 
 html,

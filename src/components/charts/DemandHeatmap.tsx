@@ -44,7 +44,9 @@ export function DemandHeatmap({ datos }: { datos: CeldaHeatmap[] }) {
                     <td key={hora} className="p-[1px]">
                       <div
                         className="group relative aspect-square rounded-sm"
-                        style={{ backgroundColor: `rgba(57, 255, 20, ${intensidad})` }}
+                        style={{
+                          backgroundColor: `color-mix(in srgb, var(--color-primary) ${intensidad * 100}%, transparent)`,
+                        }}
                       >
                         <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-surface-elevated px-2 py-1.5 text-xs text-text shadow-lg group-hover:block">
                           <span className="font-semibold text-primary">{cantidad}</span> turnos

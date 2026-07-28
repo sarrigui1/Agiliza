@@ -21,6 +21,8 @@ Para salir, use el botón **Cerrar Sesión** que aparece en la parte superior de
 
 **Pantalla:** `/checkin` (normalmente un tótem o tablet dedicado en el punto de recepción, con la sesión de este rol ya iniciada de forma permanente en el dispositivo).
 
+Si el administrador activó **"Lectura de Cédula"** en Configuración, aparece además un aviso para acercar la cédula a un lector físico USB/Bluetooth (si el sitio tiene uno) o un botón para escanearla con la cámara — al leerla, autocompleta el documento (y el nombre, en turno espontáneo) sin necesidad de digitarlo a mano.
+
 Lo que se ve en esta pantalla depende de si el administrador activó el **Módulo de Citas Programadas** en Configuración:
 
 ### A. Si el módulo de Citas Programadas está activado
@@ -94,11 +96,13 @@ Reglas de negocio globales del sistema:
 - **Algoritmo y Ordenamiento:** elegir cómo se ordena la cola (por hora de cita, por orden de llegada, o híbrido) y la proporción de intercalado entre turnos preferenciales y normales (ej. 1:2 = uno preferencial por cada dos normales).
 - **Tiempos y Tolerancia:**
   - Interruptor **"Módulo de Citas Programadas / Agenda"** — actívelo solo si la sede realmente va a registrar citas previas en `/admin/citas`; con esto apagado (por defecto), `/checkin` no le pregunta nada al paciente, entra directo al registro.
+  - Interruptor **"Lectura de Cédula (código de barras)"** — actívelo solo si el punto de Check-In tiene lector físico USB/Bluetooth o va a usar la cámara; con esto apagado (por defecto), no aparece ningún aviso ni botón de escaneo.
   - Minutos de check-in previo permitido, minutos de tolerancia de retraso, e intervalo (segundos) entre re-llamados.
 - **Gestión de Ausencias:** número de intentos de llamado antes de poder marcar "ausente", y si el reingreso a la fila queda penalizado (va al final).
 - **Privacidad (TVs):**
   - Cómo se muestra la identidad del paciente en la pantalla pública — solo el código del ticket, iniciales + documento parcial, o nombre completo.
   - **Audio de Sala:** Solo Tono/Chime, Solo Voz (anuncio hablado), o Tono + Voz (por defecto) para lo que suena en el TV al llamar un turno.
+- **Apariencia:** Oscuro (por defecto, alto contraste para TVs/tótems) o Claro (fondos blancos, para oficinas con mucha luz). Aplica a todas las pantallas del sistema por igual — es una preferencia de la sede, no de cada usuario.
 
 Después de cualquier cambio, presionar **Guardar Cambios**.
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { Save, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { actualizarConfiguracionGlobal } from '@/actions/settings';
@@ -9,8 +10,10 @@ import { AlgorithmCard } from './AlgorithmCard';
 import { TolerancesCard } from './TolerancesCard';
 import { AbsenceCard } from './AbsenceCard';
 import { PrivacyCard } from './PrivacyCard';
+import { AppearanceCard } from './AppearanceCard';
 
 export function SettingsForm({ configuracionInicial }: { configuracionInicial: ConfiguracionGlobal }) {
+  const router = useRouter();
   const [draft, setDraft] = useState(configuracionInicial);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +39,10 @@ export function SettingsForm({ configuracionInicial }: { configuracionInicial: C
       }
       setDraft(res.data);
       setGuardadoEn(Date.now());
+      // El tema visual vive en <html data-theme> del layout raíz, fuera del árbol de
+      // este componente — sin refresh, "Claro" se guardaría pero la pantalla seguiría
+      // oscura hasta la próxima navegación.
+      router.refresh();
     });
   }
 
@@ -83,6 +90,7 @@ export function SettingsForm({ configuracionInicial }: { configuracionInicial: C
           modoAudioTv={draft.modo_audio_tv}
           onChange={patch}
         />
+        <AppearanceCard temaVisual={draft.tema_visual} onChange={patch} />
       </div>
     </main>
   );

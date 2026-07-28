@@ -32,6 +32,8 @@ export type FormatoPrivacidadTv = 'solo_codigo' | 'iniciales_parcial' | 'nombre_
 
 export type ModoAudioTv = 'tono' | 'voz' | 'tono_voz';
 
+export type TemaVisual = 'oscuro' | 'claro';
+
 export type EstadoPuntoAtencion = 'fuera_de_linea' | 'disponible' | 'atendiendo' | 'pausado';
 
 export type TipoLlamado = 'inicial' | 're_llamado' | 'prioritario';
@@ -152,6 +154,7 @@ export interface Database {
           modo_audio_tv: ModoAudioTv;
           permitir_citas_programadas: boolean;
           permitir_lectura_cedula: boolean;
+          tema_visual: TemaVisual;
           intercalado_preferencial: number;
           intercalado_normal: number;
           updated_at: string;
@@ -380,6 +383,7 @@ export interface Database {
       algoritmo_cola: AlgoritmoCola;
       formato_privacidad_tv: FormatoPrivacidadTv;
       modo_audio_tv: ModoAudioTv;
+      tema_visual: TemaVisual;
       estado_punto_atencion: EstadoPuntoAtencion;
       tipo_llamado: TipoLlamado;
     };
