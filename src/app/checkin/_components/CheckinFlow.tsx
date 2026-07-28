@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { CalendarCheck, UserPlus, ArrowLeft, AlertTriangle, ScanLine, IdCard, ShieldCheck } from 'lucide-react';
+import { CalendarCheck, UserPlus, ArrowLeft, AlertTriangle, ScanLine, IdCard, ShieldCheck, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Toggle } from '@/components/ui/Toggle';
@@ -9,14 +9,32 @@ import { Modal } from '@/components/ui/Modal';
 import { NumericKeypad } from '@/components/ui/NumericKeypad';
 import { useClock } from '@/hooks/useClock';
 import { useBarcodeScannerListener } from '@/hooks/useBarcodeScannerListener';
+import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { parseCedulaColombiana } from '@/lib/parseCedulaColombiana';
 import { buscarTurnoProgramado, confirmarCheckIn, crearTurnoEspontaneo } from '@/actions/checkin';
 import type { Especialidad, Zona } from '@/types/database';
-import type { CitaEncontrada, TurnoConEstimado } from '@/types/domain';
+import { fail, type ActionResult, type CitaEncontrada, type TurnoConEstimado } from '@/types/domain';
 import { TicketModal } from './TicketModal';
 import { CedulaCameraScanner } from './CedulaCameraScanner';
 
 type Paso = 'landing' | 'cita-documento' | 'cita-resultados' | 'espontaneo';
+
+const MENSAJE_SIN_CONEXION = 'No se pudo conectar con el servidor. Verifica la conexión a internet e intenta de nuevo.';
+
+/**
+ * Las Server Actions devuelven `ActionResult` para errores de negocio esperables, pero si
+ * la conexión se cae a mitad de la llamada, `await accion()` lanza en vez de resolver — sin
+ * este wrapper, esa excepción queda sin capturar dentro del callback de `startTransition`
+ * (los error boundaries de React no atrapan errores async fuera del render) y la pantalla
+ * se queda "pensando" para siempre, sin explicarle nada al paciente.
+ */
+async function conManejoDeRed<T>(llamada: () => Promise<ActionResult<T>>): Promise<ActionResult<T>> {
+  try {
+    return await llamada();
+  } catch {
+    return fail(MENSAJE_SIN_CONEXION);
+  }
+}
 
 interface CheckinFlowProps {
   especialidades: Especialidad[];
@@ -45,6 +63,7 @@ export function CheckinFlow({
   const [aceptoDatos, setAceptoDatos] = useState(false);
   const [isPending, startTransition] = useTransition();
   const { hora, fecha } = useClock();
+  const enLinea = useNetworkStatus();
 
   function reiniciar() {
     setPaso(pasoInicial);
@@ -59,7 +78,7 @@ export function CheckinFlow({
   function buscarCita() {
     setError(null);
     startTransition(async () => {
-      const res = await buscarTurnoProgramado(documento);
+      const res = await conManejoDeRed(() => buscarTurnoProgramado(documento));
       if (!res.ok) {
         setError(res.error);
         return;
@@ -98,7 +117,7 @@ export function CheckinFlow({
     setDocumento(cedula.numeroDocumento);
     setPaso('cita-documento');
     startTransition(async () => {
-      const res = await buscarTurnoProgramado(cedula.numeroDocumento);
+      const res = await conManejoDeRed(() => buscarTurnoProgramado(cedula.numeroDocumento));
       if (!res.ok) {
         setError(res.error);
         return;
@@ -116,7 +135,7 @@ export function CheckinFlow({
   function confirmarCita(turnoId: string) {
     setError(null);
     startTransition(async () => {
-      const res = await confirmarCheckIn(turnoId, aceptoDatos);
+      const res = await conManejoDeRed(() => confirmarCheckIn(turnoId, aceptoDatos));
       if (!res.ok) {
         setError(res.error);
         return;
@@ -132,7 +151,14 @@ export function CheckinFlow({
       <header className="flex items-center justify-between border-b border-border px-16 py-6">
         <div className="flex items-center gap-4">
           <p className="text-2xl font-extrabold tracking-tight text-primary">ADMISIONES</p>
-          <Badge tone="primary">En Línea</Badge>
+          {enLinea ? (
+            <Badge tone="primary">En Línea</Badge>
+          ) : (
+            <Badge tone="warning">
+              <WifiOff className="mr-1 size-3" />
+              Sin Conexión
+            </Badge>
+          )}
         </div>
         <div className="text-right">
           <p className="font-mono text-xl text-text">{hora}</p>
@@ -141,6 +167,12 @@ export function CheckinFlow({
       </header>
 
       <div className="flex flex-1 flex-col items-center justify-center px-16 py-10">
+        {!enLinea && (
+          <div className="mb-6 flex w-full max-w-2xl items-center gap-2 rounded-lg border border-warning/50 bg-warning/10 px-4 py-3 text-sm text-warning">
+            <WifiOff className="size-4 shrink-0" />
+            Sin conexión a internet. Puedes seguir escribiendo, pero no podrás generar el ticket hasta que vuelva la señal.
+          </div>
+        )}
         {error && (
           <div className="mb-6 flex items-center gap-2 rounded-lg border border-danger/50 bg-danger/10 px-4 py-3 text-sm text-danger">
             <AlertTriangle className="size-4 shrink-0" />
@@ -179,7 +211,7 @@ export function CheckinFlow({
               onChange={setDocumento}
               onConfirm={buscarCita}
               confirmLoading={isPending}
-              confirmDisabled={documento.length < 5}
+              confirmDisabled={documento.length < 5 || !enLinea}
               label="Ingrese su número de documento o cédula"
             />
             {error && (
@@ -221,7 +253,7 @@ export function CheckinFlow({
                       </Badge>
                     )}
                   </div>
-                  <Button onClick={() => confirmarCita(cita.id)} loading={isPending} disabled={!aceptoDatos}>
+                  <Button onClick={() => confirmarCita(cita.id)} loading={isPending} disabled={!aceptoDatos || !enLinea}>
                     Confirmar Llegada
                   </Button>
                 </div>
@@ -245,6 +277,7 @@ export function CheckinFlow({
             aceptoDatos={aceptoDatos}
             onAceptoDatosChange={setAceptoDatos}
             politicaDatos={politicaDatos}
+            enLinea={enLinea}
           />
         )}
       </div>
@@ -342,6 +375,7 @@ function EspontaneoForm({
   aceptoDatos,
   onAceptoDatosChange,
   politicaDatos,
+  enLinea,
 }: {
   especialidades: Especialidad[];
   zonas: Zona[];
@@ -356,6 +390,7 @@ function EspontaneoForm({
   aceptoDatos: boolean;
   onAceptoDatosChange: (v: boolean) => void;
   politicaDatos: string;
+  enLinea: boolean;
 }) {
   const [especialidadId, setEspecialidadId] = useState(especialidades[0]?.id ?? '');
   const [zonaId, setZonaId] = useState(zonas[0]?.id ?? '');
@@ -367,15 +402,17 @@ function EspontaneoForm({
   function crear() {
     setError(null);
     startTransition(async () => {
-      const res = await crearTurnoEspontaneo({
-        nombre,
-        documento,
-        telefono,
-        especialidadId,
-        zonaId,
-        esPreferencial: preferencial,
-        aceptoTratamientoDatos: aceptoDatos,
-      });
+      const res = await conManejoDeRed(() =>
+        crearTurnoEspontaneo({
+          nombre,
+          documento,
+          telefono,
+          especialidadId,
+          zonaId,
+          esPreferencial: preferencial,
+          aceptoTratamientoDatos: aceptoDatos,
+        }),
+      );
       if (!res.ok) {
         setError(res.error);
         return;
@@ -460,7 +497,7 @@ function EspontaneoForm({
           className="mt-2"
           onClick={crear}
           loading={isPending}
-          disabled={!nombre || documento.length < 5 || !especialidadId || !zonaId || !aceptoDatos}
+          disabled={!nombre || documento.length < 5 || !especialidadId || !zonaId || !aceptoDatos || !enLinea}
         >
           Generar Ticket
         </Button>

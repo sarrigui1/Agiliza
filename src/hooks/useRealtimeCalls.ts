@@ -6,14 +6,24 @@ import type { Llamado } from '@/types/database';
 
 const MAX_HISTORIAL = 6;
 
+export type EstadoConexionRealtime = 'conectando' | 'conectado' | 'reconectando';
+
 /**
  * Suscripción Realtime (WebSockets, zero polling) a INSERT en `llamados`, filtrada por
  * zona. `llamados` ya viene anonimizada desde las RPC (`etiqueta_publica`), por lo que
  * este hook nunca toca datos con PII — cumple el requisito de <100ms del documento de
  * especificación sin necesidad de resolver relaciones adicionales en el cliente.
+ *
+ * También expone el estado de la suscripción y la hora del último evento recibido, para
+ * que la pantalla pueda avisar cuando los datos podrían estar desactualizados en vez de
+ * confiar ciegamente en un socket que se cortó — ver DisplayScreen.tsx. La reconexión en
+ * sí la maneja el cliente de Supabase (reintentos con backoff a nivel de socket); acá solo
+ * se refleja el estado, no se reimplementa el retry.
  */
 export function useRealtimeCalls(zonaId: string | null, initialCalls: Llamado[]) {
   const [calls, setCalls] = useState<Llamado[]>(initialCalls);
+  const [estadoConexion, setEstadoConexion] = useState<EstadoConexionRealtime>('conectando');
+  const [ultimaActualizacion, setUltimaActualizacion] = useState(() => Date.now());
   const onNuevoLlamadoRef = useRef<((llamado: Llamado) => void) | null>(null);
 
   useEffect(() => {
@@ -38,10 +48,19 @@ export function useRealtimeCalls(zonaId: string | null, initialCalls: Llamado[])
           (payload) => {
             const llamado = payload.new as Llamado;
             setCalls((prev) => [llamado, ...prev].slice(0, MAX_HISTORIAL));
+            setUltimaActualizacion(Date.now());
             onNuevoLlamadoRef.current?.(llamado);
           },
         )
-        .subscribe();
+        .subscribe((status) => {
+          if (cancelado) return;
+          if (status === 'SUBSCRIBED') {
+            setEstadoConexion('conectado');
+            setUltimaActualizacion(Date.now());
+          } else if (status === 'TIMED_OUT' || status === 'CHANNEL_ERROR' || status === 'CLOSED') {
+            setEstadoConexion('reconectando');
+          }
+        });
     });
 
     return () => {
@@ -55,5 +74,5 @@ export function useRealtimeCalls(zonaId: string | null, initialCalls: Llamado[])
     onNuevoLlamadoRef.current = cb;
   };
 
-  return { calls, onNuevoLlamado };
+  return { calls, onNuevoLlamado, estadoConexion, ultimaActualizacion };
 }
