@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Datos semilla (catálogos + turnos de prueba)
+-- AGILIZA — Datos semilla (catálogos + turnos de prueba)
 -- Ejecutar UNA VEZ en el SQL Editor de Supabase, después de las migraciones 0001-0006.
 -- No incluye usuarios (auth.users se gestiona desde el Dashboard, ver seed_perfiles.sql).
 -- =====================================================================================

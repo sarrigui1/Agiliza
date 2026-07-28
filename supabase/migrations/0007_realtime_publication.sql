@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Habilita Supabase Realtime (WebSockets) sobre las tablas que lo necesitan.
+-- AGILIZA — Habilita Supabase Realtime (WebSockets) sobre las tablas que lo necesitan.
 --
 -- Sin esto, los canales `postgres_changes` de useRealtimeCalls/useRealtimeTurnos se
 -- suscriben correctamente pero Postgres nunca emite el evento lógico de replicación,

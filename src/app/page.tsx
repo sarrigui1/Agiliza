@@ -8,7 +8,7 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <main className="flex min-h-full flex-col items-center justify-center gap-6 bg-bg px-6 text-center">
-      <p className="font-mono text-sm tracking-[0.3em] text-primary">FLOWQ</p>
+      <p className="font-mono text-sm tracking-[0.3em] text-primary">AGILIZA</p>
       <h1 className="text-3xl font-semibold text-text">Sistema de Llamado y Gestión de Turnos</h1>
       <Link
         href="/login"

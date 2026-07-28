@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Modo de audio del TV Display (Tono / Voz / Tono + Voz)
+-- AGILIZA — Modo de audio del TV Display (Tono / Voz / Tono + Voz)
 --
 -- También abre `configuraciones_globales` a lectura pública (anon): el TV Display corre
 -- sin sesión y necesita saber qué modo de audio usar. Nada en esta tabla es sensible

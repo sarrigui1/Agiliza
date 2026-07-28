@@ -30,7 +30,7 @@ export function ReporteView({ desde, hasta, metricas, tendencia, porServicio }: 
 
       <header className="mb-8 flex items-end justify-between border-b-2 border-gray-900 pb-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Agiliza · FlowQ</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-gray-400">Agiliza</p>
           <h1 className="text-2xl font-bold">Resumen Ejecutivo de Operación</h1>
         </div>
         <p className="text-sm text-gray-500">
@@ -92,7 +92,7 @@ export function ReporteView({ desde, hasta, metricas, tendencia, porServicio }: 
       </section>
 
       <footer className="mt-10 text-center text-[10px] text-gray-400">
-        Generado el {new Date().toLocaleString('es-CO')} — Sistema de Gestión de Turnos FlowQ
+        Generado el {new Date().toLocaleString('es-CO')} — Sistema de Gestión de Turnos Agiliza
       </footer>
     </main>
   );

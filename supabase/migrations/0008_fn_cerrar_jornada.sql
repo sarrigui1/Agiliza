@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Cierre de jornada (Vercel Cron Job nocturno)
+-- AGILIZA — Cierre de jornada (Vercel Cron Job nocturno)
 -- Requiere 0001-0007. Se invoca únicamente desde el Route Handler protegido con
 -- CRON_SECRET (src/app/api/cron/cierre-jornada/route.ts), usando el cliente Service Role.
 --

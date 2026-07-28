@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — RPC: fn_llamar_siguiente_turno
+-- AGILIZA — RPC: fn_llamar_siguiente_turno
 -- Requiere 0001_init_schema.sql y 0002_rls_policies.sql
 --
 -- Garantiza atomicidad mediante:

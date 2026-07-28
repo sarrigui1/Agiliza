@@ -28,12 +28,22 @@ const OPCIONES_AUDIO: { value: ModoAudioTv; title: string; description: string; 
 interface PrivacyCardProps {
   formatoPrivacidadTv: FormatoPrivacidadTv;
   modoAudioTv: ModoAudioTv;
+  textoInformativoTv: string;
   onChange: (
-    patch: Partial<{ formato_privacidad_tv: FormatoPrivacidadTv; modo_audio_tv: ModoAudioTv }>,
+    patch: Partial<{
+      formato_privacidad_tv: FormatoPrivacidadTv;
+      modo_audio_tv: ModoAudioTv;
+      texto_informativo_tv: string;
+    }>,
   ) => void;
 }
 
-export function PrivacyCard({ formatoPrivacidadTv, modoAudioTv, onChange }: PrivacyCardProps) {
+export function PrivacyCard({
+  formatoPrivacidadTv,
+  modoAudioTv,
+  textoInformativoTv,
+  onChange,
+}: PrivacyCardProps) {
   return (
     <Card>
       <CardTitle>
@@ -57,7 +67,7 @@ export function PrivacyCard({ formatoPrivacidadTv, modoAudioTv, onChange }: Priv
       </div>
 
       <p className="mb-3 font-mono text-xs uppercase tracking-widest text-muted">Audio de Sala</p>
-      <div className="flex flex-col gap-3">
+      <div className="mb-6 flex flex-col gap-3">
         {OPCIONES_AUDIO.map((op) => (
           <RadioCard
             key={op.value}
@@ -71,6 +81,19 @@ export function PrivacyCard({ formatoPrivacidadTv, modoAudioTv, onChange }: Priv
           />
         ))}
       </div>
+
+      <label className="block">
+        <span className="mb-1 block font-mono text-xs uppercase tracking-widest text-muted">
+          Texto Informativo (TV)
+        </span>
+        <textarea
+          value={textoInformativoTv}
+          onChange={(e) => onChange({ texto_informativo_tv: e.target.value })}
+          rows={3}
+          placeholder="Avisos para los pacientes, se muestran en el ticker inferior del TV. Use | para separar mensajes."
+          className="w-full resize-y rounded-lg border border-border bg-surface-elevated px-4 py-3 text-sm text-text"
+        />
+      </label>
     </Card>
   );
 }

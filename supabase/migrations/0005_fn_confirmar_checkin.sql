@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Fase 2 (soporte): fn_confirmar_checkin
+-- AGILIZA — Fase 2 (soporte): fn_confirmar_checkin
 --
 -- No estaba en la lista original de 4 RPCs operativas, pero es necesaria para que
 -- `src/actions/checkin.ts` pueda completar el flujo "Check-In de Agenda Previa":

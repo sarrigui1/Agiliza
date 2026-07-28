@@ -245,7 +245,7 @@ export function CheckinFlow({
       )}
 
       <footer className="border-t border-primary bg-surface px-16 py-3 text-center font-mono text-xs uppercase tracking-widest text-muted">
-        Sistema de Gestión de Turnos — FlowQ &nbsp;|&nbsp; Recuerde tener su documento a la mano
+        Sistema de Gestión de Turnos — Agiliza &nbsp;|&nbsp; Recuerde tener su documento a la mano
       </footer>
 
       {ticket && (

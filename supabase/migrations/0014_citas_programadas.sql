@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Módulo de Citas Programadas opcional
+-- AGILIZA — Módulo de Citas Programadas opcional
 --
 -- `permitir_citas_programadas` decide si /checkin ofrece el flujo de "Tengo Cita
 -- Programada" o entra directo al registro de turno espontáneo. Por defecto queda

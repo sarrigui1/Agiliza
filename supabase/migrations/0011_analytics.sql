@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Módulo de Analytics Ejecutivo
+-- AGILIZA — Módulo de Analytics Ejecutivo
 -- Índice de soporte + 4 RPCs de agregación (se calculan en Postgres, no trayendo todas
 -- las filas al cliente, para que el rango "Este Mes" siga siendo rápido a medida que
 -- crece `turnos`).

@@ -88,6 +88,7 @@ export function SettingsForm({ configuracionInicial }: { configuracionInicial: C
         <PrivacyCard
           formatoPrivacidadTv={draft.formato_privacidad_tv}
           modoAudioTv={draft.modo_audio_tv}
+          textoInformativoTv={draft.texto_informativo_tv}
           onChange={patch}
         />
         <AppearanceCard temaVisual={draft.tema_visual} onChange={patch} />

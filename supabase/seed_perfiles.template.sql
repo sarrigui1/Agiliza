@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Plantilla para vincular usuarios de Auth con perfiles/roles y puntos de atención.
+-- AGILIZA — Plantilla para vincular usuarios de Auth con perfiles/roles y puntos de atención.
 --
 -- Los usuarios de autenticación NO se crean por SQL (GoTrue maneja el hash de contraseña
 -- y la validación de email) — créalos primero en el Dashboard:
@@ -11,7 +11,7 @@
 
 -- 1) Administrador — accede a /admin/settings y /admin/supervisor
 insert into public.perfiles (id, nombre_completo, rol)
-values ('08351068-602a-4544-af6d-a9b1ed7262ae', 'Administrador FlowQ', 'admin');
+values ('08351068-602a-4544-af6d-a9b1ed7262ae', 'Administrador Agiliza', 'admin');
 
 -- 2) Agente — accede a /workspace. Se vincula al punto de atención "Consultorio 5".
 insert into public.perfiles (id, nombre_completo, rol)

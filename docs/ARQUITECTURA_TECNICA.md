@@ -1,4 +1,4 @@
-# FlowQ (Agiliza) — Documento Técnico de Arquitectura
+# Agiliza — Documento Técnico de Arquitectura
 
 Sistema de Llamado y Gestión de Turnos en tiempo real. Este documento describe el stack, la arquitectura, el modelo de datos, la seguridad y las recomendaciones operativas. Para instalar el sistema paso a paso, ver [`MANUAL_INSTALACION_IMPLEMENTACION.md`](./MANUAL_INSTALACION_IMPLEMENTACION.md); para el uso diario por rol, ver [`MANUAL_USUARIOS.md`](./MANUAL_USUARIOS.md).
 
@@ -6,7 +6,7 @@ Sistema de Llamado y Gestión de Turnos en tiempo real. Este documento describe 
 
 ## 1. Resumen del Sistema
 
-FlowQ gestiona el flujo completo de atención al público: desde el check-in de un paciente/cliente (con cita previa o espontáneo), pasando por la cola de espera, el llamado y la atención en un punto físico (consultorio, caja, módulo), hasta el cierre administrativo de la jornada. Incluye una pantalla pública de TV con actualización en tiempo real, un panel operativo para agentes, y un panel administrativo con configuración, supervisión, gestión de infraestructura y analítica ejecutiva.
+Agiliza gestiona el flujo completo de atención al público: desde el check-in de un paciente/cliente (con cita previa o espontáneo), pasando por la cola de espera, el llamado y la atención en un punto físico (consultorio, caja, módulo), hasta el cierre administrativo de la jornada. Incluye una pantalla pública de TV con actualización en tiempo real, un panel operativo para agentes, y un panel administrativo con configuración, supervisión, gestión de infraestructura y analítica ejecutiva.
 
 ## 2. Stack Tecnológico
 

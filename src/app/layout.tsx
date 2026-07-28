@@ -17,7 +17,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'FlowQ — Sistema de Llamado y Gestión de Turnos',
+  title: 'Agiliza — Sistema de Llamado y Gestión de Turnos',
   description: 'Gestión de flujo de pacientes en tiempo real.',
 };
 

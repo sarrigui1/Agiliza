@@ -2,6 +2,9 @@ import { createClient } from '@/lib/supabase/server';
 import { DisplayScreen } from './_components/DisplayScreen';
 import type { ModoAudioTv } from '@/types/database';
 
+const TEXTO_INFORMATIVO_POR_DEFECTO =
+  'Por favor, tenga su identificación a mano para agilizar la atención   |   Recuerde que puede agendar su cita desde la app   |   Sistema de Gestión de Turnos — Agiliza';
+
 export const dynamic = 'force-dynamic';
 
 interface DisplayPageProps {
@@ -27,7 +30,11 @@ export default async function DisplayPage({ searchParams }: DisplayPageProps) {
 
   const [{ data: zona }, { data: config }] = await Promise.all([
     supabase.from('zonas').select('*').eq('codigo', zone).maybeSingle(),
-    supabase.from('configuraciones_globales').select('modo_audio_tv').eq('id', 1).maybeSingle(),
+    supabase
+      .from('configuraciones_globales')
+      .select('modo_audio_tv, texto_informativo_tv')
+      .eq('id', 1)
+      .maybeSingle(),
   ]);
 
   if (!zona) {
@@ -47,6 +54,14 @@ export default async function DisplayPage({ searchParams }: DisplayPageProps) {
     .limit(6);
 
   const modoAudio: ModoAudioTv = config?.modo_audio_tv ?? 'tono_voz';
+  const textoInformativo = config?.texto_informativo_tv ?? TEXTO_INFORMATIVO_POR_DEFECTO;
 
-  return <DisplayScreen zona={zona} initialCalls={llamados ?? []} modoAudio={modoAudio} />;
+  return (
+    <DisplayScreen
+      zona={zona}
+      initialCalls={llamados ?? []}
+      modoAudio={modoAudio}
+      textoInformativo={textoInformativo}
+    />
+  );
 }

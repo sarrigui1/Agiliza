@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Fase 2: RPCs operativas restantes
+-- AGILIZA — Fase 2: RPCs operativas restantes
 -- Requiere 0001_init_schema.sql, 0002_rls_policies.sql y 0003_fn_llamar_siguiente_turno.sql
 -- =====================================================================================
 

@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Sistema de Llamado y Gestión de Turnos
+-- AGILIZA — Sistema de Llamado y Gestión de Turnos
 -- Fase 1: Cimentación Técnica y Base de Datos
 -- Ejecutar en el Editor SQL de Supabase (o vía `supabase db push`)
 -- =====================================================================================

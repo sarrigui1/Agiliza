@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Permite lectura pública (anon) de `especialidades`
+-- AGILIZA — Permite lectura pública (anon) de `especialidades`
 --
 -- Mismo bug real que 0010_zonas_lectura_publica.sql: /checkin corre sin sesión (rol
 -- anon), pero la política `especialidades_lectura_autenticados` (0002_rls_policies.sql)

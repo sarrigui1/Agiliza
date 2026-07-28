@@ -1,6 +1,6 @@
-# FlowQ (Agiliza) — Manual de Instalación e Implementación
+# Agiliza — Manual de Instalación e Implementación
 
-Guía paso a paso para poner en marcha una instancia nueva de FlowQ, desde el proyecto de Supabase vacío hasta el sistema desplegado y configurado en producción. Para el modelo de datos, la arquitectura y las decisiones de seguridad, ver [`ARQUITECTURA_TECNICA.md`](./ARQUITECTURA_TECNICA.md). Para el uso diario del sistema por rol, ver [`MANUAL_USUARIOS.md`](./MANUAL_USUARIOS.md).
+Guía paso a paso para poner en marcha una instancia nueva de Agiliza, desde el proyecto de Supabase vacío hasta el sistema desplegado y configurado en producción. Para el modelo de datos, la arquitectura y las decisiones de seguridad, ver [`ARQUITECTURA_TECNICA.md`](./ARQUITECTURA_TECNICA.md). Para el uso diario del sistema por rol, ver [`MANUAL_USUARIOS.md`](./MANUAL_USUARIOS.md).
 
 ---
 
@@ -63,6 +63,9 @@ En el **SQL Editor** de Supabase (o vía `supabase db push` si el proyecto está
 | 12 | `0012_modo_audio_tv.sql` | Columna `modo_audio_tv` + lectura pública de `configuraciones_globales`. |
 | 13 | `0013_especialidades_lectura_publica.sql` | Permite lectura anónima de `especialidades` activas (la necesita `/checkin`, que también corre sin sesión). |
 | 14 | `0014_citas_programadas.sql` | Columna `permitir_citas_programadas` (activa/desactiva el módulo de agenda). |
+| 15 | `0015_lectura_cedula.sql` | Columna `permitir_lectura_cedula` (activa/desactiva el aviso y botón de escaneo de cédula en Check-In). |
+| 16 | `0016_tema_visual.sql` | Columna `tema_visual` (Oscuro/Claro, aplica a toda la app). |
+| 17 | `0017_texto_informativo_tv.sql` | Columna `texto_informativo_tv` (texto editable del ticker inferior del TV Display). |
 
 > **Regla general para el futuro:** cualquier tabla nueva que deba ser leída por una pantalla pública sin sesión (`/display`, `/checkin`) necesita una política RLS explícita para el rol `anon` — no basta con crear la tabla y confiar en el comportamiento por defecto. Ver la sección de Troubleshooting más abajo.
 
@@ -85,7 +88,7 @@ Este es el **único** usuario que debe crearse manualmente fuera de la aplicaci�
 
 ```sql
 insert into public.perfiles (id, nombre_completo, rol)
-values ('<uuid-copiado>', 'Administrador FlowQ', 'admin');
+values ('<uuid-copiado>', 'Administrador Agiliza', 'admin');
 ```
 
 (`supabase/seed_perfiles.template.sql` trae este mismo patrón de ejemplo, incluyendo cómo crear también un agente y una cuenta de recepción si se prefiere sembrarlos todos por SQL en vez de usar `/admin/usuarios` luego).
@@ -178,6 +181,6 @@ src/
 └── proxy.ts                 # Control de acceso por rol (ex-middleware.ts)
 
 supabase/
-├── migrations/               # 0001..0014, en orden estricto
+├── migrations/               # 0001..0017, en orden estricto
 ├── seed.sql, seed_perfiles.template.sql
 ```

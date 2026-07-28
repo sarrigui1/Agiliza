@@ -1,5 +1,5 @@
 /**
- * FlowQ — Tipos de la base de datos Supabase.
+ * Agiliza — Tipos de la base de datos Supabase.
  *
  * Escrito a mano siguiendo el formato de `supabase gen types typescript`.
  * Una vez el proyecto esté enlazado a Supabase (Fase 2), regenerar con:
@@ -152,6 +152,7 @@ export interface Database {
           reingreso_penalizado: boolean;
           formato_privacidad_tv: FormatoPrivacidadTv;
           modo_audio_tv: ModoAudioTv;
+          texto_informativo_tv: string;
           permitir_citas_programadas: boolean;
           permitir_lectura_cedula: boolean;
           tema_visual: TemaVisual;

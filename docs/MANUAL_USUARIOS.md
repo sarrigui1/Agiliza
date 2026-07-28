@@ -1,4 +1,4 @@
-# FlowQ (Agiliza) — Manual de Usuarios
+# Agiliza — Manual de Usuarios
 
 Manual de uso del Sistema de Llamado y Gestión de Turnos, organizado por rol. Cada persona ve únicamente las pantallas que le corresponden según su usuario. Para instalar o desplegar el sistema, ver [`MANUAL_INSTALACION_IMPLEMENTACION.md`](./MANUAL_INSTALACION_IMPLEMENTACION.md).
 
@@ -102,6 +102,7 @@ Reglas de negocio globales del sistema:
 - **Privacidad (TVs):**
   - Cómo se muestra la identidad del paciente en la pantalla pública — solo el código del ticket, iniciales + documento parcial, o nombre completo.
   - **Audio de Sala:** Solo Tono/Chime, Solo Voz (anuncio hablado), o Tono + Voz (por defecto) para lo que suena en el TV al llamar un turno.
+  - **Texto Informativo (TV):** el mensaje del ticker que se desplaza en la parte inferior del TV Display — editable libremente, use `|` para separar varios avisos.
 - **Apariencia:** Oscuro (por defecto, alto contraste para TVs/tótems) o Claro (fondos blancos, para oficinas con mucha luz). Aplica a todas las pantallas del sistema por igual — es una preferencia de la sede, no de cada usuario.
 
 Después de cualquier cambio, presionar **Guardar Cambios**.

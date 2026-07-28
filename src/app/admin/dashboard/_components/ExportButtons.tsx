@@ -24,7 +24,7 @@ export function ExportButtons({ desde, hasta, rango }: ExportButtonsProps) {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `flowq_turnos_${desde.slice(0, 10)}_${hasta.slice(0, 10)}.csv`;
+      a.download = `agiliza_turnos_${desde.slice(0, 10)}_${hasta.slice(0, 10)}.csv`;
       a.click();
       URL.revokeObjectURL(url);
     });

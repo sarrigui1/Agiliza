@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Fase 3: RPCs de atención en consultorio
+-- AGILIZA — Fase 3: RPCs de atención en consultorio
 -- Requiere 0001..0005. Completa el ciclo de vida que faltaba en el Workspace:
 --   'llamado' --fn_iniciar_atencion--> 'en_atencion' --fn_finalizar_atencion--> 'finalizado'
 --

@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Permite lectura pública (anon) de `zonas`
+-- AGILIZA — Permite lectura pública (anon) de `zonas`
 --
 -- Bug real: /display?zone=piso2 corre sin sesión (rol anon), pero la política
 -- `zonas_lectura_autenticados` (0002_rls_policies.sql) solo permitía rol `authenticated`.

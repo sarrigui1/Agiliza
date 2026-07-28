@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Lectura de cédula (PDF417) opcional en Check-In
+-- AGILIZA — Lectura de cédula (PDF417) opcional en Check-In
 --
 -- `permitir_lectura_cedula` decide si /checkin muestra el aviso de "acerca el código de
 -- barras..." y el botón de escaneo por cámara (además de escuchar un lector físico

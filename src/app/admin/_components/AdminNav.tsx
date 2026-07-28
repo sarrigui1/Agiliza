@@ -24,7 +24,7 @@ export function AdminNav({ rol }: { rol: RolUsuario | null }) {
   return (
     <nav className="flex items-center justify-between border-b border-border bg-surface px-8 py-3">
       <div className="flex items-center gap-6">
-        <span className="font-mono text-xs font-bold tracking-widest text-primary">FLOWQ_ADMIN</span>
+        <span className="font-mono text-xs font-bold tracking-widest text-primary">AGILIZA_ADMIN</span>
         <div className="flex gap-1">
           {links.map(({ href, label, icon: Icon }) => {
             const activo = pathname.startsWith(href);

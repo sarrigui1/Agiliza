@@ -13,9 +13,10 @@ interface DisplayScreenProps {
   zona: Zona;
   initialCalls: Llamado[];
   modoAudio: ModoAudioTv;
+  textoInformativo: string;
 }
 
-export function DisplayScreen({ zona, initialCalls, modoAudio }: DisplayScreenProps) {
+export function DisplayScreen({ zona, initialCalls, modoAudio, textoInformativo }: DisplayScreenProps) {
   const { calls, onNuevoLlamado } = useRealtimeCalls(zona.id, initialCalls);
   const { habilitado, habilitar, anunciar } = useTicketAudio(modoAudio);
   const { hora, fecha } = useClock();
@@ -131,11 +132,7 @@ export function DisplayScreen({ zona, initialCalls, modoAudio }: DisplayScreenPr
           Zona: {zona.nombre}
         </p>
         <div className="flex-1 overflow-hidden">
-          <p className="animate-marquee whitespace-nowrap font-mono text-sm text-muted">
-            Por favor, tenga su identificación a mano para agilizar la atención &nbsp;&nbsp;|&nbsp;&nbsp;
-            Recuerde que puede agendar su cita desde la app &nbsp;&nbsp;|&nbsp;&nbsp; Sistema de Gestión de
-            Turnos — FlowQ
-          </p>
+          <p className="animate-marquee whitespace-nowrap font-mono text-sm text-muted">{textoInformativo}</p>
         </div>
         <div className="shrink-0 text-right">
           <p className="font-mono text-2xl text-text">{hora}</p>

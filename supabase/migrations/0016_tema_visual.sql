@@ -1,5 +1,5 @@
 -- =====================================================================================
--- FLOWQ — Modo claro (Light Mode) opcional, configurable a nivel de sede
+-- AGILIZA — Modo claro (Light Mode) opcional, configurable a nivel de sede
 --
 -- `tema_visual` decide la paleta de TODA la aplicación (TV, check-in, workspace, panel
 -- admin) — es una preferencia de sede, no de usuario individual, consistente con el
