@@ -38,6 +38,15 @@ export type EstadoPuntoAtencion = 'fuera_de_linea' | 'disponible' | 'atendiendo'
 
 export type TipoLlamado = 'inicial' | 're_llamado' | 'prioritario';
 
+export type EstadoNotificacion = 'pendiente' | 'enviado' | 'entregado' | 'leido' | 'fallido';
+
+export type TipoEventoNotificacion =
+  | 'checkin_exitoso'
+  | 'pre_llamado'
+  | 'llamado_modulo'
+  | 'recordatorio_cita'
+  | 'encuesta_post_atencion';
+
 // ---------------------------------------------------------------------------------------
 // Database
 // ---------------------------------------------------------------------------------------
@@ -180,6 +189,7 @@ export interface Database {
           estado: EstadoTurno;
           documento_paciente: string;
           nombre_paciente: string;
+          telefono_paciente: string | null;
           acepto_tratamiento_datos: boolean;
           fecha_consentimiento_datos: string | null;
           hora_cita: string | null;
@@ -204,6 +214,7 @@ export interface Database {
           estado?: EstadoTurno;
           documento_paciente: string;
           nombre_paciente: string;
+          telefono_paciente?: string | null;
           acepto_tratamiento_datos?: boolean;
           fecha_consentimiento_datos?: string | null;
           hora_cita?: string | null;
@@ -269,6 +280,64 @@ export interface Database {
           created_at?: string;
         };
         Update: never;
+        Relationships: [];
+      };
+
+      notificaciones_configuracion: {
+        Row: {
+          id: number;
+          habilitado: boolean;
+          notificar_checkin: boolean;
+          notificar_pre_llamado: boolean;
+          notificar_llamado: boolean;
+          notificar_recordatorio_cita: boolean;
+          notificar_encuesta: boolean;
+          umbral_pre_llamado: number;
+          minutos_delay_encuesta: number;
+          costo_sesion_utilidad_usd: number;
+          trm_cop: number;
+          updated_at: string;
+          actualizado_por: string | null;
+        };
+        Insert: Partial<Database['public']['Tables']['notificaciones_configuracion']['Row']> & {
+          id?: 1;
+        };
+        Update: Partial<Database['public']['Tables']['notificaciones_configuracion']['Row']>;
+        Relationships: [];
+      };
+
+      notificaciones_log: {
+        Row: {
+          id: string;
+          turno_id: string | null;
+          tipo_evento: TipoEventoNotificacion;
+          telefono_destino: string;
+          estado: EstadoNotificacion;
+          costo_usd: number | null;
+          costo_cop: number | null;
+          trm_aplicada: number | null;
+          twilio_message_sid: string | null;
+          codigo_error: string | null;
+          mensaje_error: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          turno_id?: string | null;
+          tipo_evento: TipoEventoNotificacion;
+          telefono_destino: string;
+          estado?: EstadoNotificacion;
+          costo_usd?: number | null;
+          costo_cop?: number | null;
+          trm_aplicada?: number | null;
+          twilio_message_sid?: string | null;
+          codigo_error?: string | null;
+          mensaje_error?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['notificaciones_log']['Insert']>;
         Relationships: [];
       };
     };
@@ -407,3 +476,5 @@ export type ConfiguracionGlobal = Database['public']['Tables']['configuraciones_
 export type Turno = Database['public']['Tables']['turnos']['Row'];
 export type Llamado = Database['public']['Tables']['llamados']['Row'];
 export type RegistroAuditoria = Database['public']['Tables']['auditoria']['Row'];
+export type NotificacionesConfiguracion = Database['public']['Tables']['notificaciones_configuracion']['Row'];
+export type NotificacionLog = Database['public']['Tables']['notificaciones_log']['Row'];

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings, Radar, Building2, LayoutDashboard, FileBarChart, CalendarClock, Users } from 'lucide-react';
+import { Settings, Radar, Building2, LayoutDashboard, FileBarChart, CalendarClock, Users, MessageCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SignOutButton } from '@/components/shared/SignOutButton';
 import type { RolUsuario } from '@/types/database';
@@ -13,6 +13,7 @@ const LINKS = [
   { href: '/admin/supervisor', label: 'Supervisión', icon: Radar, soloAdmin: false },
   { href: '/admin/infraestructura', label: 'Infraestructura', icon: Building2, soloAdmin: false },
   { href: '/admin/citas', label: 'Citas', icon: CalendarClock, soloAdmin: false },
+  { href: '/admin/notificaciones', label: 'Notificaciones', icon: MessageCircle, soloAdmin: false },
   { href: '/admin/reportes', label: 'Reportes', icon: FileBarChart, soloAdmin: false },
   { href: '/admin/usuarios', label: 'Usuarios', icon: Users, soloAdmin: true },
 ];

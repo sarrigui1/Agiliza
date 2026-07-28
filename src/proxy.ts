@@ -13,8 +13,10 @@ import type { RolUsuario } from '@/types/database';
  * - /api/cron         Vercel Cron invoca sin cookies de sesión; se autentica solo con
  *                     CRON_SECRET dentro del propio Route Handler. Si no se excluye aquí,
  *                     el proxy lo redirige a /login antes de que el handler pueda correr.
+ * - /api/webhooks     Servicios externos (Twilio) invocan sin cookies de sesión; cada
+ *                     handler valida la firma del proveedor por su cuenta.
  */
-const PUBLIC_PREFIXES = ['/login', '/display', '/checkin', '/api/cron'];
+const PUBLIC_PREFIXES = ['/login', '/display', '/checkin', '/api/cron', '/api/webhooks'];
 
 /** Prefijo de ruta protegida -> roles permitidos (cubre /admin/settings y /admin/supervisor) */
 const PROTECTED_ROUTES: { prefix: string; roles: RolUsuario[] }[] = [

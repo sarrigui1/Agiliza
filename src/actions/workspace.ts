@@ -1,9 +1,12 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { ok, fail, type ActionResult } from '@/types/domain';
 import type { Turno } from '@/types/database';
+import { dispararNotificacion } from '@/lib/notifications/dispatch';
+import { mensajeLlamadoModulo } from '@/lib/notifications/templates';
 
 /**
  * MÓDULO 3 — Panel de Control del Agente (Operator Workspace).
@@ -39,8 +42,27 @@ export async function llamarSiguienteTurno(
 
   if (error) return fail(error.message);
 
+  const turno = data as Turno | null;
+
+  if (turno?.telefono_paciente) {
+    const { data: puntoAtencion } = await supabase
+      .from('puntos_atencion')
+      .select('nombre')
+      .eq('id', puntoAtencionId)
+      .maybeSingle();
+
+    after(() =>
+      dispararNotificacion({
+        turnoId: turno.id,
+        telefono: turno.telefono_paciente,
+        tipoEvento: 'llamado_modulo',
+        mensaje: mensajeLlamadoModulo(turno.nombre_paciente, turno.codigo, puntoAtencion?.nombre ?? 'el punto de atención'),
+      }),
+    );
+  }
+
   revalidatePath('/workspace');
-  return ok((data as Turno | null) ?? null); // null = cola vacía, no es un error
+  return ok(turno); // null = cola vacía, no es un error
 }
 
 // ---------------------------------------------------------------------------------------
